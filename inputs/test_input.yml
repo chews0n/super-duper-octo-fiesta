@@ -1,0 +1,25 @@
+test_inputs:
+  wellbore_radius: 0.25 #wellbore radius [m]
+  thick: 100 #reservoir thickness [m]
+  perm: 1e-12 #Peremability [m^2]
+  init_press: 1.5e7 #Initial Reservoir Pressure [Pa]
+  c_eff: 2e-9 #effective compressibility [Pa-1]
+  skin_factor: 0 #Skin Factor
+  mu_oil: 0.02 #Oil viscosity [Pa*s]
+  phi: 0.25 #Porosity [-]
+  gamma: 0.5772 #euler constant [-]
+  flow_rates: #volumetric flow rate [m^3/s]
+    - 0.006
+    - 0.01
+    - 0
+    - 0.009
+    - 0.002
+    - 0.006
+  flow_rate_time: #Time that the flow rate is held for [s], this assumes it starts at time zero and one rate follows another
+    - 86400
+    - 172800
+    - 259200
+    - 172800
+    - 245600
+    - 162532
+
