@@ -11,9 +11,7 @@ To Summarize, our Features list is as follows:
 3. Mean Temp
 4. Total Precipitation
 5. Snow on Ground
-6. Direction of Max Gust
-7. Speed of Max Gust
-8. Not included in the CSV files, but please use the max temperature of the previous day as another feature
+6. Not included in the CSV files, but please use the max temperature of the previous day as another feature
 
 Target should be:
 1. Max Temp of the current day
