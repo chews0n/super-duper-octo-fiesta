@@ -34,6 +34,6 @@ class DownloadWeatherData:
         between years, otherwise the file will be overwritten and separate files for each year will not be generated
         :return: NULL
         """
-        for year in range(self.start_year, self.end_year):
+        for year in range(self.start_year, self.end_year + 1):
             year_string = self.scraping_string.format(year)
             urllib.request.urlretrieve(year_string, filename=download_location.format(year))
