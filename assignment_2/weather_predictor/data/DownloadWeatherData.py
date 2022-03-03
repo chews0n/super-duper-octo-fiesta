@@ -11,9 +11,9 @@ class DownloadWeatherData:
         Initialize the class in order to download the weather data from the Weather Canada website.
 
         :param station_number: The station number provided by weather canada to extract the data at. The default is
-        Calgary Intl CS (27211) for the station id :param start_year: The year in which you would like to start the
-        data collection at :param end_year: The year you would like to end the data collection at. The default is the
-        current year.
+        Calgary Intl CS (27211) for the station id
+        :param start_year: The year in which you would like to start the data collection at
+        :param end_year: The year you would like to end the data collection at. The default is the current year.
         """
 
         self.station_number = station_number
