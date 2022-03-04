@@ -25,7 +25,7 @@ def plot_results(plot_time, plot_rates, plot_pressures):
 
 
 def main(input_file=""):
-
+    # TODO: Load and Parse the input file, save it to separate variables to then use in the program
 
     with open(input_file) as f:
         input_dict = yaml.safe_load(f)
@@ -43,7 +43,26 @@ def main(input_file=""):
     gamma = float(input_dict["test_inputs"]["gamma"])
     wellbore_radius = float(input_dict["test_inputs"]["wellbore_radius"])
 
-    time_resolution = 60 # this would be used for calculating draw down intervals
+    time_resolution = 60 # this would be used for calculating draw down intervals for 60 seconds
+
+    # TODO: Load the times and rates so that you can use them when coding, what do I mean by this?
+    # Make sure that you have a rate and the elapsed time defined for more than just the start and end of the well testing
+    # You will have to perform 6 different calculations because of superposition and sum them all up at the end
+    # Doing this with a 2d array or a dictionary is probably your best bet
+
+
+    # Your code here
+
+
+    # TODO: Calculate the pressure drawdown for each of the well tests and use superposition and the initial reservoir pressure from the provided equation to determine your well pressure at each time throughout the series, this should be done with a resolution that will make it so the draw down is plotted correctly
+
+
+    # Your code here
+
+    # TODO: Plot your results, use the provided function for this.
+
+    # plot_results(timelist, rateslist, pressurelist)
+
 
 
     # for rateidx, rates in enumerate(flow_rates):
@@ -59,7 +78,7 @@ def main(input_file=""):
     #     print("this is outside of the if statement")
     #
     print("hello")
-    #plot_results(timelist, rateslist, pressurelist)
+
 
 
 if __name__ == '__main__':
