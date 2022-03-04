@@ -10,8 +10,16 @@ The transient solution for a drawdown test can be represented by the following e
 
 ![result](imgs/get_equaimages)
 
-It will be helpful to remember the superposition principle for this exercise
+It will be helpful to remember the superposition principle for this exercise, which states that any sum of individual solutions of a 2nd order linear PDE is also a solution of the equation. More info can be found below in the resources.
 
 The results should look somewhat similar to the plot below:
 
 ![result](imgs/example.jpg)
+
+## Resources
+Python beginners guide: https://www.freecodecamp.org/news/the-python-guide-for-beginners
+
+Well Testing: [Lecture Notes](notes/well-testing.pdf)
+
+Well Testing: https://folk.ntnu.no/perarnsl/Literatur/lecture_notes.pdf
+
