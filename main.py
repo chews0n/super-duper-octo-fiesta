@@ -4,6 +4,24 @@ import pandas
 import argparse
 import os
 import yaml
+import matplotlib
+from matplotlib import pyplot as plt
+
+
+def plot_results(plot_time, plot_rates, plot_pressures):
+    fig, ax1 = plt.subplots()
+
+    ax2 = ax1.twinx()
+    ax1.plot(plot_time, plot_rates, 'b-')
+    ax2.plot(plot_time, plot_pressures, 'r-')
+
+    ax1.set_xlabel('Time In Seconds')
+    ax1.set_ylabel('Well Rate [m3/s]', color='b')
+    ax2.set_ylabel('Well Pressure [Pa]', color='r')
+
+    fig.suptitle('Well Testing Assignment')
+
+    plt.savefig("example.jpg")
 
 
 def main(input_file=""):
@@ -25,6 +43,8 @@ def main(input_file=""):
     gamma = float(input_dict["test_inputs"]["gamma"])
     wellbore_radius = float(input_dict["test_inputs"]["wellbore_radius"])
 
+    time_resolution = 60 # this would be used for calculating draw down intervals
+
 
     # for rateidx, rates in enumerate(flow_rates):
     #     testlist.append(rates*2)
@@ -39,10 +59,7 @@ def main(input_file=""):
     #     print("this is outside of the if statement")
     #
     print("hello")
-
-
-
-
+    #plot_results(timelist, rateslist, pressurelist)
 
 
 if __name__ == '__main__':
