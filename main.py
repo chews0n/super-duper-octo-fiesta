@@ -77,7 +77,6 @@ def main(input_file=""):
     print("hello")
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
