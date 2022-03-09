@@ -1,4 +1,4 @@
-test_inputs:
+test_input:
   wellbore_radius: 0.25 #wellbore radius [m]
   thick: 100 #reservoir thickness [m]
   perm: 1e-12 #Peremability [m^2]
