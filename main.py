@@ -30,31 +30,22 @@ def main(input_file="test_input.yml"):
     with open(input_file) as f:
         input_dict = yaml.safe_load(f)
 
-    flow_rates = input_dict["test_input"]["flow_rates"]
-    flow_rate_time = input_dict["test_input"]["flow_rate_time"]
-    wellbore_radius = float(input_dict["test_input"]["wellbore_radius"])
-    thick = float(input_dict["test_input"]["thick"])
-    perm = float(input_dict["test_input"]["perm"])
-    init_press = float(input_dict["test_input"]["init_press"])
-    c_eff = float(input_dict["test_input"]["c_eff"])
-    skin_factor = float(input_dict["test_input"]["skin_factor"])
-    mu_oil = float(input_dict["test_input"]["mu_oil"])
-    phi = float(input_dict["test_input"]["phi"])
-    gamma = float(input_dict["test_input"]["gamma"])
-    wellbore_radius = float(input_dict["test_input"]["wellbore_radius"])
+    flow_rates = input_dict["flow_rates"]
+    flow_rate_time = input_dict["flow_rate_time"]
+    wellbore_radius = float(input_dict["wellbore_radius"])
+    thick = float(input_dict["thick"])
+    perm = float(input_dict["perm"])
+    init_press = float(input_dict["init_press"])
+    c_eff = float(input_dict["c_eff"])
+    skin_factor = float(input_dict["skin_factor"])
+    mu_oil = float(input_dict["mu_oil"])
+    phi = float(input_dict["phi"])
+    gamma = float(input_dict["gamma"])
+    wellbore_radius = float(input_dict["wellbore_radius"])
 
     time_resolution = 60 # this would be used for calculating draw down intervals for 60 seconds
 
-    # Should the argparser go here??? Stopped Mar.8'22
-    if __name__ == '__main__':
-        parser = argparse.ArgumentParser()
 
-        parser.add_argument("--input_file", action="store", default=os.path.join("inputs", "test_input.yml"),
-                            help="Location of the well test inputs to parse.")
-
-        inputArgs = parser.parse_args()
-
-        main(inputArgs.input_file)
 
     # TODO: Load the times and rates so that you can use them when coding, what do I mean by this?
     # Make sure that you have a rate and the elapsed time defined for more than just the start and end of the well testing
@@ -83,10 +74,29 @@ def main(input_file="test_input.yml"):
     # TODO: Calculate the pressure drawdown for each of the well tests and use superposition and the initial reservoir pressure from the provided equation to determine your well pressure at each time throughout the series, this should be done with a resolution that will make it so the draw down is plotted correctly
     # Your code here
     # Now do the 6 calculations and save the answers into another array and then sum them.
+    # TODO: This overwrites the pressure_array variable each time in the loop, not really sure what this is doing.
+    # TODO: You will have to divide the problem up into smaller time segments to get an appropriate resolution for the plots, to give you a hand with this your loop should look something like this:
+    # linspace in numpy creates an array of times, from 0.0 to the last entry in the cumulative time array [-1] means last entry and has cumulative_time_array[-1] / time_resolution number of partitions
+    flow_rates_to_plot = list()
+
+    for time_of_the_well_test in np.linspace(0., cumulative_time_array[-1], int(cumulative_time_array[-1] / time_resolution)):
+        for rate_idx, well_rate in enumerate(flow_rates):
+            # In here you would then check if the well has started, you can exploit the fact that the first rate provided starts at time zero
+            if rate_idx == 0:
+                # calculate pressure and add it to the pressure array, continue is a placeholder
+                continue
+
+            else:
+                # Check if the well has started
+                if time_of_the_well_test >= cumulative_time_array[rate_idx - 1]:
+                    # calculate pressure and add it to the pressure array, continue is a placeholder
+                    continue
+
     for i in range (1,6):
         pressure_array = []
         pressure_array = [0 for i in range(6)]
-        i = 0
+        i = 0 # TODO: This will overwrite i from the above for loop
+        # TODO: phi was loaded from the dictionary above already into the variable phi, the reason you were getting an error is that the first key in the dictionary is the name of the input "test_input", I'm actually going to remove this in your input file to make it less cumbersome
         print(input_dict.get("phi"));
         #stopped with error dict Mar.7 and 8'22
 
@@ -97,6 +107,11 @@ def main(input_file="test_input.yml"):
 
         total_pressure = 0
         for i in range(0, len(pressure_array)):
+            # TODO: similar to above, you can't reuse the same variable name for a NESTED loop, a NESTED loop should look something like this:
+            # for i in range (0, 6):
+            #     for j in range(0,6):
+            #         for k in range(0,6):
+            # and so on and so forth, reusing variables overwrites them based on whatever has been executed last
             sum = sum + pressure_array[i];
             print(total_pressure)
 
@@ -119,6 +134,18 @@ def main(input_file="test_input.yml"):
     #     print("this is outside of the if statement")
     #
     print("hello")
+
+# Should the argparser go here???
+# TODO: This should go at the bottom of the file
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input_file", action="store", default=os.path.join("inputs", "test_input.yml"),
+                        help="Location of the well test inputs to parse.")
+
+    inputArgs = parser.parse_args()
+
+    main(inputArgs.input_file)
 
 
 
