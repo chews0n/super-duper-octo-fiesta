@@ -3,6 +3,7 @@ import argparse
 import os
 import yaml
 from matplotlib import pyplot as plt
+import math
 
 
 def plot_results(plot_time, plot_rates, plot_pressures):
@@ -29,7 +30,6 @@ def main(input_file=""):
 
     flow_rates = input_dict["test_inputs"]["flow_rates"]
     flow_rate_time = input_dict["test_inputs"]["flow_rate_time"]
-    wellbore_radius = float(input_dict["test_inputs"]["wellbore_radius"])
     thick = float(input_dict["test_inputs"]["thick"])
     perm = float(input_dict["test_inputs"]["perm"])
     init_press = float(input_dict["test_inputs"]["init_press"])
@@ -47,34 +47,53 @@ def main(input_file=""):
     # You will have to perform 6 different calculations because of superposition and sum them all up at the end
     # Doing this with a 2d array or a dictionary is probably your best bet
 
+    start_time = list()
+    end_time = list()
 
-    # Your code here
+    for val in flow_rate_time:
+        if len(start_time) < 1:
+            start_time.append(0.0)
+            end_time.append(val)
+        else:
+            start_time.append(end_time[-1])
+            end_time.append(end_time[-1] + val)
+
+    max_number_of_steps = int(end_time[-1]/time_resolution)
+    timelist = list()
+    timelist.append(0.0)
+    for t in range(0, max_number_of_steps):
+        timelist.append(timelist[-1] + time_resolution)
 
 
     # TODO: Calculate the pressure drawdown for each of the well tests and use superposition and the initial reservoir pressure from the provided equation to determine your well pressure at each time throughout the series, this should be done with a resolution that will make it so the draw down is plotted correctly
+    pressurelist = list()
+    rateslist = list()
 
+    for elapsed_time in timelist:
+        pressure_current = init_press
+        rate_to_use = 0.0
 
-    # Your code here
+        for rateidx, flowrate in enumerate(flow_rates):
+
+            if start_time[rateidx] <= elapsed_time:
+                qlast = 0.0
+                if rateidx != 0:
+                    qlast = flow_rates[rateidx - 1]
+
+                # Make a calculation for the pressure draw down and add it to the pressure drawdown
+                if elapsed_time - start_time[rateidx] > 0.0:
+                    pressure_current -= ((flowrate - qlast) * mu_oil / (4 * math.pi * perm * thick)) * (math.log(4 * perm * (elapsed_time - start_time[rateidx]) / (phi * c_eff * mu_oil * math.pow(wellbore_radius, 2) * math.exp(gamma))) + 2*skin_factor)
+
+                if start_time[rateidx] <= elapsed_time <= end_time[rateidx]:
+                    rate_to_use = flowrate
+
+        # add the values to the pressure and rate list
+        pressurelist.append(pressure_current)
+        rateslist.append(rate_to_use)
 
     # TODO: Plot your results, use the provided function for this.
 
-    # plot_results(timelist, rateslist, pressurelist)
-
-
-
-    # for rateidx, rates in enumerate(flow_rates):
-    #     testlist.append(rates*2)
-    #     if rates >= 0.0065:
-    #         print("The rate is larger or equal to 0.0065!!")
-    #         print("I'm printing another statement")
-    #     elif rates == 0.0065:
-    #         print("The rate is equal to 0.0065")
-    #     else:
-    #         print("The number is less than 0.0065")
-    #
-    #     print("this is outside of the if statement")
-    #
-    print("hello")
+    plot_results(timelist, rateslist, pressurelist)
 
 
 if __name__ == '__main__':
@@ -87,6 +106,5 @@ if __name__ == '__main__':
 
     main(inputArgs.input_file)
 
-    # a comment comment more... more...
 
 
