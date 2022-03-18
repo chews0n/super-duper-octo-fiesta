@@ -3,6 +3,7 @@ import argparse
 import os
 import yaml
 from matplotlib import pyplot as plt
+import math
 
 
 def plot_results(plot_time, plot_rates, plot_pressures):
@@ -74,22 +75,22 @@ def main(input_file=""):
         timelist.append(timelist[-1] + time_resolution)
     rateslist = list()
     pressurelist= list()
-    for elaspsed_time in timelist:
+    for elapsed_time in timelist:
         pressure_current = init_press
         rate_to_use = 0.0
 
         for rateidx, flowrate in enumerate(flow_rates):
 
             if start_times[rateidx] <= elapsed_time:
-                 qlast = 0.0
-                 if rateidx != 0:
-                     qlast = flow_rates[rateidx - 1]
+                qlast = 0.0
+                if rateidx != 0:
+                    qlast = flow_rates[rateidx - 1]
 
-    # Make a calculation for the pressure draw down and add it to the pressure drawdown
-                 if elapsed_time - start_time[rateidx] > 0.0:
-                     pressure_current -= ((flowrate - qlast) * mu_oil / (4 * math.pi * perm * thick)) * (math.log(4 * perm * (elapsed_time - start_time[rateidx]) / (phi * c_eff * mu_oil * math.pow(wellbore_radius, 2) * math.exp(gamma))) + 2*skin_factor)
+                # Make a calculation for the pressure draw down and add it to the pressure drawdown
+                if elapsed_time - start_times[rateidx] > 0.0:
+                    pressure_current -= ((flowrate - qlast) * mu_oil / (4 * math.pi * perm * thick)) * (math.log(4 * perm * (elapsed_time - start_times[rateidx]) / (phi * c_eff * mu_oil * math.pow(wellbore_radius, 2) * math.exp(gamma))) + 2*skin_factor)
 
-                if start_time[rateidx] <= elapsed_time <= end_time[rateidx]:
+                if start_times[rateidx] <= elapsed_time <= end_times[rateidx]:
                     rate_to_use = flowrate
         # add the values to the pressure and rate list
         pressurelist.append(pressure_current)
@@ -97,7 +98,7 @@ def main(input_file=""):
 
     # TODO: Plot your results, use the provided function for this.
 
-     plot_results(timelist, rateslist, pressurelist)
+    plot_results(timelist, rateslist, pressurelist)
 
     # for rateidx, rates in enumerate(flow_rates):
     #     testlist.append(rates*2)
