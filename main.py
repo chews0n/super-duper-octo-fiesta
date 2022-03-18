@@ -57,7 +57,7 @@ def main(input_file=""):
             end_times.append(val)
         else:
             start_times.append(end_times[-1])
-            end_times.append(end_times[-1]+ val)
+            end_times.append(end_times[-1] + val)
             print(start_times)
 
 
