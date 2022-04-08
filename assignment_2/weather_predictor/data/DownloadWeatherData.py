@@ -22,7 +22,7 @@ class DownloadWeatherData:
 
         # This string downloads daily time intervals
         self.scraping_string = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID" \
-                               "=27211&Year={}&Month=1&Day=14&timeframe=2&submit=Download+Data"
+                               "={}&Year={}&Month=1&Day=14&timeframe=2&submit=Download+Data"
 
     def download_data(self, download_location=os.path.join(os.getcwd(), "weather-data-calgary-{}.csv")):
         """
@@ -35,5 +35,5 @@ class DownloadWeatherData:
         :return: NULL
         """
         for year in range(self.start_year, self.end_year + 1):
-            year_string = self.scraping_string.format(year)
+            year_string = self.scraping_string.format(self.station_number, year)
             urllib.request.urlretrieve(year_string, filename=download_location.format(year))
