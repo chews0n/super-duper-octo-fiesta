@@ -21,7 +21,7 @@ def main():
     test_year = 2022
     data = list()
 
-    for i in range(start_year, end_year):  #change made to exclude the year 2022 from the training data
+    for i in range(start_year, end_year + 1):  #change made to exclude the year 2022 from the training data
         data.append(pd.read_csv("weather-data-calgary-{0}.csv".format(i)))
 
     print("hello")
