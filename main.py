@@ -44,7 +44,7 @@ def main(input_file=""):
     # TODO: Load the times and rates so that you can use them when coding, what do I mean by this? Make sure that you
     #  have a rate and the elapsed time defined for more than just the start and end of the well testing You will
     #  have to perform 6 different calculations because of superposition and sum them all up at the end Doing this
-    #  with a 2d array or a dictionary is probably your best bet Your code here
+    #  with a 2d array or a dictionary is probably your best bet
 
     start_time = list()
     end_time = list()
@@ -55,13 +55,11 @@ def main(input_file=""):
         else:
             start_time.append(end_time[-1])
             end_time.append(end_time[-1] + val)
-            print(start_time)
 
     # TODO: Calculate the pressure drawdown for each of the well tests and use superposition and the initial
     #  reservoir pressure from the provided equation to determine your well pressure at each time throughout the
     #  series, this should be done with a resolution that will make it so the draw down is plotted correctly
 
-    # Your code here
     max_number_of_steps = int(end_time[-1] / time_resolution)
     timelist = list()
     timelist.append(0.0)
@@ -80,7 +78,7 @@ def main(input_file=""):
                 if rateidx != 0:
                     qlast = flow_rates[rateidx - 1]
 
-    # Make a calculation for the pressure draw down and add it to the pressure drawdown
+                # Make a calculation for the pressure draw down and add it to the pressure drawdown
                 if elapsed_time - start_time[rateidx] > 0.0:
                     pressure_current -= ((flowrate - qlast) * mu_oil / (4 * math.pi * perm * thick)) * (math.log(4 * perm * (elapsed_time - start_time[rateidx]) / (phi * c_eff * mu_oil * math.pow(wellbore_radius, 2) * math.exp(gamma))) + 2*skin_factor)
 
@@ -94,20 +92,6 @@ def main(input_file=""):
 
     plot_results(timelist, rateslist, pressurelist)
 
-    # for rateidx, rates in enumerate(flow_rates):
-    #     testlist.append(rates*2)
-    #     if rates >= 0.0065:
-    #         print("The rate is larger or equal to 0.0065!!")
-    #         print("I'm printing another statement")
-    #     elif rates == 0.0065:
-    #         print("The rate is equal to 0.0065")
-    #     else:
-    #         print("The number is less than 0.0065")
-    #
-    #     print("this is outside of the if statement")
-    #
-    print("hello")
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -118,5 +102,3 @@ if __name__ == '__main__':
     inputArgs = parser.parse_args()
 
     main(inputArgs.input_file)
-
-    # a comment comment more... more...
