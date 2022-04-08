@@ -30,7 +30,7 @@ def main():
     #  called "concat" that will allow you to combine multiple dataframes from a list of dataframes, you have the
     #  list of dataframes now in "data"
 
-    # df_train = pd.concat(, ignore_index=True) # in order to get the dataframe without some funky column indices that overwrite one another, use ignore_index=True
+    # df_train = pd.concat(data, ignore_index=True) # in order to get the dataframe without some funky column indices that overwrite one another, use ignore_index=True
 
 
 
