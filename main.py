@@ -27,17 +27,17 @@ def main(input_file=""):
     with open(input_file) as f:
         input_dict = yaml.safe_load(f)
 
-    flow_rates = input_dict["test_inputs"]["flow_rates"]
-    flow_rate_time = input_dict["test_inputs"]["flow_rate_time"]
-    thick = float(input_dict["test_inputs"]["thick"])
-    perm = float(input_dict["test_inputs"]["perm"])
-    init_press = float(input_dict["test_inputs"]["init_press"])
-    c_eff = float(input_dict["test_inputs"]["c_eff"])
-    skin_factor = float(input_dict["test_inputs"]["skin_factor"])
-    mu_oil = float(input_dict["test_inputs"]["mu_oil"])
-    phi = float(input_dict["test_inputs"]["phi"])
-    gamma = float(input_dict["test_inputs"]["gamma"])
-    wellbore_radius = float(input_dict["test_inputs"]["wellbore_radius"])
+    flow_rates = input_dict["test_input"]["flow_rates"]
+    flow_rate_time = input_dict["test_input"]["flow_rate_time"]
+    thick = float(input_dict["test_input"]["thick"])
+    perm = float(input_dict["test_input"]["perm"])
+    init_press = float(input_dict["test_input"]["init_press"])
+    c_eff = float(input_dict["test_input"]["c_eff"])
+    skin_factor = float(input_dict["test_input"]["skin_factor"])
+    mu_oil = float(input_dict["test_input"]["mu_oil"])
+    phi = float(input_dict["test_input"]["phi"])
+    gamma = float(input_dict["test_input"]["gamma"])
+    wellbore_radius = float(input_dict["test_input"]["wellbore_radius"])
 
     time_resolution = 60  # this would be used for calculating draw down intervals for 60 seconds
 
@@ -91,6 +91,7 @@ def main(input_file=""):
     # TODO: Plot your results, use the provided function for this.
 
     plot_results(timelist, rateslist, pressurelist)
+    plt.show()
 
 
 if __name__ == '__main__':
