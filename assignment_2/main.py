@@ -1,5 +1,6 @@
 from weather_predictor.data import DownloadWeatherData
 import pandas as pd
+import numpy as np
 from datetime import datetime
 from datetime import date
 import time
@@ -26,7 +27,6 @@ def main():
     for i in range(start_year, end_year + 1):  #change made to exclude the year 2022 from the training data
         data.append(pd.read_csv("weather-data-calgary-{0}.csv".format(i)))
 
-    print("hello")
 
     # TODO: Create a training and test (2022 data for test) combined dataframe in pandas, hint: pandas has a function
     #  called "concat" that will allow you to combine multiple dataframes from a list of dataframes, you have the
@@ -64,15 +64,30 @@ def main():
     #  eg. df_train.replace(r"[a-zA-Z]", 0.0) where the r before the " refers to regex and the values in the brackets
     #  are the ones we're searching for to remove
     df_train.replace(r"[a-zA-Z]", 0.0)
-    print("hello")
+
 
     # TODO: Copy out the "Date/Time" column to separate variable for the test dataframe basically to be used for
     #  plotting later on, then drop the "Date/Time" column from the test/train dataframes
+    Date_Time_Test_List = df_test["Date/Time"]
+    #df_train.drop(columns=['Date/Test'])
+    #df_test.drop(columns=['Date/Test'])
+    df_train.drop('Date/Time', inplace=True, axis=1)
+    df_test.drop('Date/Time', inplace=True, axis=1)
+    print(df_train.head())
+    print(df_test.head())
+    print(Date_Time_Test_List)
 
     # TODO: Create another column for the previous day's max temperature in both the test and train dataframes,
     #  hint you will use the column 'Max Temp (°C)' and the "shift" function of the dataframe, note that this is daily data
+    train_prev_day_max_temp = df_train['Max Temp (°C)'].shift(periods=1, axis=0, fill_value=0)
+    df_train_2 = df_train.assign(PrevDayMaxTemp=train_prev_day_max_temp)
+    print(df_train_2.head())
 
+    test_prev_day_max_temp = df_test['Max Temp (°C)'].shift(periods=1, axis=0, fill_value=0)
+    df_test_2 = df_test.assign(PrevDayMaxTemp=test_prev_day_max_temp)
+    print(df_test_2.head())
 
+    print("hello")
     # TODO: Start building the machine learning model... More on this to come, unless you want to start tackling
     #  this on your own
 
