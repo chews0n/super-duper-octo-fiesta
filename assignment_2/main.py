@@ -144,7 +144,20 @@ def main():
     #Calculate r2 value
     #print(mean_squared_error(y_test, y_pred))
     #print(r2_score(y_test, y_pred))
-    print("r2 value is", regressor.score(y_test, y_pred))
+
+    # calculate our own r2 value
+    mean = 0
+    for idx, test_val in enumerate(y_test):
+        mean += test_val
+    total_sum_of_squares = 0
+    residual_sum_of_squares = 0
+    for idx, test_val in enumerate(y_test):
+        total_sum_of_squares += (test_val - mean) ** 2
+        residual_sum_of_squares += (test_val - y_pred[idx]) ** 2
+
+    r2val = 1 - residual_sum_of_squares / total_sum_of_squares
+
+    print("r2 value is", r2val)
 
     Date_Time_Test_List = pd.to_datetime(Date_Time_Test_List)
 
