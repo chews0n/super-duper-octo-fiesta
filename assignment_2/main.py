@@ -2,15 +2,12 @@ from weather_predictor.data import DownloadWeatherData
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from datetime import date
-import time
+
 from matplotlib import pyplot as plt
-#from sklearn.metrics import mean_squared_error # can't find this package?
-#from sklearn import mean_squared_error # error?
+
+import matplotlib.dates as mdates
 
 from catboost import CatBoostRegressor, Pool
-#from sklearn.metrics import r2_scor # can't find this package?
-#from sklearn import r2_score
 
 unused_columns = ['Longitude (x)', 'Latitude (y)', 'Climate ID',
                   'Station Name', 'Data Quality', 'Max Temp Flag',
@@ -25,11 +22,15 @@ def plot_results(Date_Time_Test_List, y_test, y_pred):
 
     ax2 = ax1.twinx()
     ax1.plot(Date_Time_Test_List, y_test, 'b-')
-    ax2.plot(Date_Time_Test_List, y_pred, 'r-')
+    ax2.plot(Date_Time_Test_List, y_pred, 'ro')
 
     ax1.set_xlabel('Date')
     ax1.set_ylabel('Actual Max Temp [C]', color='b')
     ax2.set_ylabel('Predicted Max Temp [C]', color='r')
+
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator((1, 15)))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    plt.setp(plt.gca().get_xticklabels(), rotation=60, ha="right")
 
     fig.suptitle('Weather Assignment 2 Actual & Predicted Values')
 
@@ -38,8 +39,8 @@ def plot_results(Date_Time_Test_List, y_test, y_pred):
 def main():
     global unused_columns
 
-    weather_data = DownloadWeatherData()
-    weather_data.download_data()
+    #weather_data = DownloadWeatherData()
+    #weather_data.download_data()
 
     start_year = 2010
     end_year = 2021
@@ -67,6 +68,8 @@ def main():
     StartDate = datetime.strptime(str(test_year) + '-01-01', '%Y-%m-%d')
     Delta = (Now - StartDate)
     print(Delta)
+
+    df_test = df_test.head(Delta.days)
 
 
     # TODO: Drop the junk columns from the list above "unused_columns" using pandas function "drop",
@@ -142,6 +145,8 @@ def main():
     #print(mean_squared_error(y_test, y_pred))
     #print(r2_score(y_test, y_pred))
     print("r2 value is", regressor.score(y_test, y_pred))
+
+    Date_Time_Test_List = pd.to_datetime(Date_Time_Test_List)
 
     plot_results(Date_Time_Test_List, y_test, y_pred)
     plt.show()
