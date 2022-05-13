@@ -4,9 +4,13 @@ import numpy as np
 from datetime import datetime
 from datetime import date
 import time
+from matplotlib import pyplot as plt
+#from sklearn.metrics import mean_squared_error # can't find this package?
+#from sklearn import mean_squared_error # error?
 
 from catboost import CatBoostRegressor, Pool
-from sklearn.metrics import r2_score, mean_absolute_error
+#from sklearn.metrics import r2_scor # can't find this package?
+#from sklearn import r2_score
 
 unused_columns = ['Longitude (x)', 'Latitude (y)', 'Climate ID',
                   'Station Name', 'Data Quality', 'Max Temp Flag',
@@ -15,6 +19,21 @@ unused_columns = ['Longitude (x)', 'Latitude (y)', 'Climate ID',
                   'Total Precip Flag', 'Snow on Grnd Flag', 'Dir of Max Gust Flag',
                   'Spd of Max Gust Flag', 'Total Rain (mm)', 'Total Snow (cm)',
                   'Heat Deg Days (°C)', 'Cool Deg Days (°C)', 'Dir of Max Gust (10s deg)', 'Spd of Max Gust (km/h)']
+
+def plot_results(Date_Time_Test_List, y_test, y_pred):
+    fig, ax1 = plt.subplots()
+
+    ax2 = ax1.twinx()
+    ax1.plot(Date_Time_Test_List, y_test, 'b-')
+    ax2.plot(Date_Time_Test_List, y_pred, 'r-')
+
+    ax1.set_xlabel('Date')
+    ax1.set_ylabel('Actual Max Temp [C]', color='b')
+    ax2.set_ylabel('Predicted Max Temp [C]', color='r')
+
+    fig.suptitle('Weather Assignment 2 Actual & Predicted Values')
+
+    plt.savefig("exampleAssign2.jpg")
 
 def main():
     global unused_columns
@@ -117,13 +136,17 @@ def main():
     # Predict the results
     y_pred = regressor.predict(x_test)
 
-    print("stopping here....")
-
     # TODO: Plot and compare the predicted data to the data that actually happened, so this actual data is in the test dataframes. You'll use matplotlib for this and the plot should look something like the image that I am going to put in the folder
 
+    #Calculate r2 value
+    #print(mean_squared_error(y_test, y_pred))
+    #print(r2_score(y_test, y_pred))
+    print("r2 value is", regressor.score(y_test, y_pred))
 
+    plot_results(Date_Time_Test_List, y_test, y_pred)
+    plt.show()
 
-
+    print("stopping here....")
 
 if __name__ == "__main__":
     main()
