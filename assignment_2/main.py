@@ -1,4 +1,5 @@
 from weather_predictor.data import DownloadWeatherData
+
 import pandas as pd
 import numpy as np
 from datetime import datetime
