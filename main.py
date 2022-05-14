@@ -52,18 +52,12 @@ def main(input_file=""):
     start_times = list()
     end_times = list()
     for val in flow_rate_time:
-        if len(start_times)<1:
+        if len(start_times) < 1:
             start_times.append(0.0)
             end_times.append(val)
         else:
             start_times.append(end_times[-1])
             end_times.append(end_times[-1] + val)
-            print(start_times)
-
-
-
-
-
 
     # TODO: Calculate the pressure drawdown for each of the well tests and use superposition and the initial reservoir pressure from the provided equation to determine your well pressure at each time throughout the series, this should be done with a resolution that will make it so the draw down is plotted correctly
 
@@ -74,7 +68,7 @@ def main(input_file=""):
     for t in range(0, max_number_of_steps):
         timelist.append(timelist[-1] + time_resolution)
     rateslist = list()
-    pressurelist= list()
+    pressurelist = list()
     for elapsed_time in timelist:
         pressure_current = init_press
         rate_to_use = 0.0
@@ -88,7 +82,10 @@ def main(input_file=""):
 
                 # Make a calculation for the pressure draw down and add it to the pressure drawdown
                 if elapsed_time - start_times[rateidx] > 0.0:
-                    pressure_current -= ((flowrate - qlast) * mu_oil / (4 * math.pi * perm * thick)) * (math.log(4 * perm * (elapsed_time - start_times[rateidx]) / (phi * c_eff * mu_oil * math.pow(wellbore_radius, 2) * math.exp(gamma))) + 2*skin_factor)
+                    pressure_current -= ((flowrate - qlast) * mu_oil / (4 * math.pi * perm * thick)) * (math.log(
+                        4 * perm * (elapsed_time - start_times[rateidx]) / (
+                                    phi * c_eff * mu_oil * math.pow(wellbore_radius, 2) * math.exp(
+                                gamma))) + 2 * skin_factor)
 
                 if start_times[rateidx] <= elapsed_time <= end_times[rateidx]:
                     rate_to_use = flowrate
@@ -99,6 +96,7 @@ def main(input_file=""):
     # TODO: Plot your results, use the provided function for this.
 
     plot_results(timelist, rateslist, pressurelist)
+    plt.show()
 
     # for rateidx, rates in enumerate(flow_rates):
     #     testlist.append(rates*2)
@@ -112,7 +110,6 @@ def main(input_file=""):
     #
     #     print("this is outside of the if statement")
     #
-    print("hello")
 
 
 if __name__ == '__main__':
