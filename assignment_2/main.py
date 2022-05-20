@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from IPython.display import display
 from datetime import datetime, timedelta
+from matplotlib import pyplot as plt
 from catboost import CatBoostRegressor, Pool
 from sklearn.metrics import r2_score, mean_absolute_error
 pd.options.display.max_columns = None
@@ -100,6 +101,30 @@ def main():
     #build model
     regressor = CatBoostRegressor(iterations=500, learning_rate=0.1, logging_level='Silent', random_seed=0)
 
-    train_pool = pool(x_train,y_train)
-if __name__ == "__main__":
-    main()
+    train_pool = Pool(x_train, y_train)
+    regressor.fit(train_pool, eval_set=(x_test, y_test))
+
+    #predict the results
+    y_pred = regressor.predict(x_test)
+    # TODO: Plot and compare the predicted data to the data that actually happened, so this actual data is in the test dataframes. You'll use matplotlib for this and the plot should look something like the image that I am going to put in the folder
+    # calculate our own r2 value
+    mean = 0
+    for idx, test_val in enumerate(y_test):
+        mean += test_val
+    total_sum_of_squares = 0
+    residual_sum_of_squares = 0
+    for idx, test_val in enumerate(y_test):
+        total_sum_of_squares += (test_val - mean) ** 2
+        residual_sum_of_squares += (test_val - y_pred[idx]) ** 2
+
+    r2val = 1 - residual_sum_of_squares / total_sum_of_squares
+
+    print("r2 value is", r2val)
+
+    Date_Time_Test_List = pd.to_datetime(Date_Time_Test_List)
+
+    plot_results(Date_Time_Test_List, y_test, y_pred)
+    plt.show()
+
+    print("stopping here....")
+
