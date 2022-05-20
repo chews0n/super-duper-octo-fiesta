@@ -39,7 +39,10 @@ A rough draft of all of the inputs for the model
 
 ## Pre First Steps
 - We will need to decide on what we're going to do. So that means what types of field(s) we're going to pull data for. For example, last year we looked at all wells in the last 10 years in the Montney. You guys might want to do something different though. Probably where ever Monica is working is best.
+ANSWER: SO we're going to look at wells in the Montney, but what does that entail. We'll use BCOGC data, so we have functions to recycle from the last assignment. I would try to limit that to the last 10 ish years of data and do forecast horizons of 10 years max, although I guess we could try to push that and try to be more "predictive", but that's a little sketchy.
 - Also, with this what are we going to predict? Probably oil/gas production, but on what timeline and are we going to do time dependant predictions, meaning that we would have to train separate models for each time horizon and then probably use that output as the new input for the next time horizon, so on and so forth. What you could do is monthly production values (you have monthlies from the data) over a 10-20 year time horizon and training the separate models at each month.
+ANSWER: Are we going to look at oil volumes or gas volumes or condensate or some sort of BOE of the three? Do all 3, that might get interesting though with wells that have no oil, but you can guard against that in the inputs.
+Time dependent horizons, so for that I would suggest no more resolution than monthly on a 10 year horizon.
 
 ## First Steps
 1. We will need to grab data for this. Where to get this data and how to use it will be the important parts
