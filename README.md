@@ -1,25 +1,49 @@
-# Multi Rate Well Testing 
+# Assignment Ideas 
 
-Develop a simulator in Python 3 where: 
-1. The rate and duration of production of a well are given as an input
-2. The plot of well pressures and rates are provided as the output.
+## PDP Evaluations
+Output: production forecast -> 5 year production forecast, 10 year, 20 year
+NOTE: this is a time dependant variable, so that's something to consider.
+What would you use to predict PDP? (Inputs)
+- Perm
+- OOIP
+- Poro
+- Historical Prod
+- Pressure
 
-Take the parameters provided in [the example input](inputs/test_input.yml) (eg. reservoir initial condition, permeability, etc.) as inputs for the simulator. During your well test, **5 DIFFERENT FLOW RATES** should be used for different periods of time. Create a YAML input parser for the inputs provided and the flow rates so that they can be varied by the user, this may also include more than 5 different rates or periods.
+TIP: try to keep features/inputs to around 10 max
 
-The transient solution for a drawdown test can be represented by the following equation:
+On what scale should predictably be?
+- Formation level
+- Reservoir level
+- Well level
+- Perforation Level
 
-![result](imgs/get_equaimages)
+Should we have multiple models based on which formation/reservoir we are in?
 
-It will be helpful to remember the superposition principle for this exercise, which states that any sum of individual solutions of a 2nd order linear PDE is also a solution of the equation. More info can be found below in the resources.
+So I guess from that, you can also do development optimization. So your model will be able to give you predictions and then you can do another regression to maximize Production or NPV or whatever
 
-The results should look somewhat similar to the plot below:
+## Feature List
+A rough draft of all of the inputs for the model
+- Pressure
+- Time well is online, but if we're going to do monthlies, this is inherently picked up by the model training as you would need the time that the well has been producing in order to get the right inputs/outputs
+- Previous time period's production volumes (Oil/Gas)
+- length of the well
+- completions - this will probably be a bunch of different things like shot density, phasing, OH, etc....
+- Permeability
+- Porosity
+- vertical/horizontal
+- depth
+- initial saturations
+- location of the well
+- Stimulation/water flooding/secondary or tertiary recovery methods - this is probably be a classification input meaning you have lots of different names that correspond to different values within the model. So what you would do here is convert them to discrete numbers (ie. 0, 1, 2, 3) and each of them corresponds to a separate type that you're referring to.
 
-![result](imgs/example.jpg)
+## Pre First Steps
+- We will need to decide on what we're going to do. So that means what types of field(s) we're going to pull data for. For example, last year we looked at all wells in the last 10 years in the Montney. You guys might want to do something different though. Probably where ever Monica is working is best.
+ANSWER: SO we're going to look at wells in the Montney, but what does that entail. We'll use BCOGC data, so we have functions to recycle from the last assignment. I would try to limit that to the last 10 ish years of data and do forecast horizons of 10 years max, although I guess we could try to push that and try to be more "predictive", but that's a little sketchy.
+- Also, with this what are we going to predict? Probably oil/gas production, but on what timeline and are we going to do time dependant predictions, meaning that we would have to train separate models for each time horizon and then probably use that output as the new input for the next time horizon, so on and so forth. What you could do is monthly production values (you have monthlies from the data) over a 10-20 year time horizon and training the separate models at each month.
+ANSWER: Are we going to look at oil volumes or gas volumes or condensate or some sort of BOE of the three? Do all 3, that might get interesting though with wells that have no oil, but you can guard against that in the inputs.
+Time dependent horizons, so for that I would suggest no more resolution than monthly on a 10 year horizon.
 
-## Resources
-Python beginners guide: https://www.freecodecamp.org/news/the-python-guide-for-beginners
-
-Well Testing: [Lecture Notes](notes/well-testing.pdf)
-
-Well Testing: https://folk.ntnu.no/perarnsl/Literatur/lecture_notes.pdf
-
+## First Steps
+1. We will need to grab data for this. Where to get this data and how to use it will be the important parts
+2. Once we have the data, starting cleaning it, preferably something that takes in the raw data and uses scripting to clean out the data. This will be useful for using this on other sets of data, probably of the same type. What do I mean by that, I mean that if you're using for example GeoScout data, you should be able to use other GeoScout data with the cleaning software. Having said that, GeoScout data is usually fairly clean for modern wells/completions.
