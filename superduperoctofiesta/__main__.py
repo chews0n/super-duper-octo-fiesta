@@ -14,7 +14,7 @@ AREA_CODE = [6200, 9022, 9021]
 
 FORMATION_CODE = [4990, 4995, 4997, 5000, 4000]
 
-FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"],
+FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"], #TODO: Also, here you will want to do the full range of inputs that you need from the individual CSV's
              "perf.csv": ['PERF STAGE NUM', 'CHARGE TYPE', 'CHARGE SIZE (g)', 'SHOTS PER METER', 'DEGREE OF PHASING',
                           'PERF COMMENTS'],
              'hydraulic_fracture.csv': ['COMPLTN TOP DEPTH (m)', 'COMPLTN BASE DEPTH (m)', 'FRAC STAGE NUM',
@@ -36,6 +36,8 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"],
              'zone_prd_2007_to_2015.csv': ["Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
              'zone_prd_2016_to_present.csv': ["Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
              'BC Total Production.csv': ["Zone Prod Period", "Oil Production (m3)", "Gas Production (e3m3)", "Condensate Production (m3)"]}#multiple WA
+
+INPUT_HEADERS = ['Well Authorization Number'] #TODO: populate this list with the headers that you will need for the model
 
 def str2bool(v):
     if isinstance(v, bool):
