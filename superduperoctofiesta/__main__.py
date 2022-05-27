@@ -10,6 +10,10 @@ OGC_URLS = ['https://reports.bcogc.ca/ogc/app001/r/ams_reports/bc_total_producti
             'https://iris.bcogc.ca/download/drill_csv.zip',
             'https://iris.bcogc.ca/download/prod_csv.zip']
 
+AREA_CODE = [6200, 9022, 9021]
+
+FORMATION_CODE = [4990, 4995, 4997, 5000, 4000]
+
 FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"],
              "perf.csv": ['PERF STAGE NUM', 'CHARGE TYPE', 'CHARGE SIZE (g)', 'SHOTS PER METER', 'DEGREE OF PHASING',
                           'PERF COMMENTS'],
