@@ -14,6 +14,10 @@ AREA_CODE = [6200, 9022, 9021]
 
 FORMATION_CODE = [4990, 4995, 4997, 5000, 4000]
 
+# The format of the FILE_DICT is as follows:
+# {FILENAME(IN FULL): [list of headers that you need to read from the file into the program]}
+# In python {} means dictionary and [] means list, these are all comma separated
+
 FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"], #TODO: Also, here you will want to do the full range of inputs that you need from the individual CSV's
              "perf.csv": ['PERF STAGE NUM', 'CHARGE TYPE', 'CHARGE SIZE (g)', 'SHOTS PER METER', 'DEGREE OF PHASING',
                           'PERF COMMENTS'],
@@ -81,6 +85,10 @@ def main():
     ogc_data = ScrapeOGC(folder=args.output_folder, urls=OGC_URLS)
 
     ogc_data.download_data_url(file_names=FILE_DICT, force_download=args.download_ogc)
+
+    ogc_data.find_well_names(area_code=AREA_CODE, formation_code=FORMATION_CODE)
+
+    ogc_data.read_well_data(file_name=FILE_DICT)
 
 
 
