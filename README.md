@@ -24,18 +24,23 @@ So I guess from that, you can also do development optimization. So your model wi
 
 ## Feature List
 A rough draft of all of the inputs for the model
-- Pressure
-- Time well is online, but if we're going to do monthlies, this is inherently picked up by the model training as you would need the time that the well has been producing in order to get the right inputs/outputs
-- Previous time period's production volumes (Oil/Gas)
-- length of the well
-- completions - this will probably be a bunch of different things like shot density, phasing, OH, etc....
-- Permeability
-- Porosity
-- vertical/horizontal
-- depth
-- initial saturations
-- location of the well
-- Stimulation/water flooding/secondary or tertiary recovery methods - this is probably be a classification input meaning you have lots of different names that correspond to different values within the model. So what you would do here is convert them to discrete numbers (ie. 0, 1, 2, 3) and each of them corresponds to a separate type that you're referring to.
+## Melanie
+- Pressure (time dependant)
+- Production rates divided on a 30 day basis (time dependant)
+- Previous time period's production volumes (Oil/Gas) (time dependant)
+- completions - this will probably be a bunch of different things like shot density, phasing, OH, etc.... (constant)
+
+## Islam
+- length of the well (constant)
+- location of well (constant)
+- Permeability (constantish)
+- Porosity (constantish)
+
+## Monica
+- vertical/horizontal (flag for well) (constant)
+- depth (constant)
+- initial saturations (constant)
+- Stimulation/water flooding/secondary or tertiary recovery methods - this is probably be a classification input meaning you have lots of different names that correspond to different values within the model. So what you would do here is convert them to discrete numbers (ie. 0, 1, 2, 3) and each of them corresponds to a separate type that you're referring to. (time dependant)
 
 ## Pre First Steps
 - We will need to decide on what we're going to do. So that means what types of field(s) we're going to pull data for. For example, last year we looked at all wells in the last 10 years in the Montney. You guys might want to do something different though. Probably where ever Monica is working is best.
