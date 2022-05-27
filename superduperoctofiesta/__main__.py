@@ -80,7 +80,6 @@ def main():
 
     ogc_data.download_data_url(file_names=FILE_DICT, force_download=args.download_ogc)
 
-    ogcData = ScrapeOGC(folder=args.output_folder, urls=OGC_URLS)
 
 
 if __name__ == "__main__":
