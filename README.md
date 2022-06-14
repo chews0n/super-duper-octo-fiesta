@@ -40,7 +40,6 @@ A rough draft of all of the inputs for the model
 - vertical/horizontal (flag for well) (constant)
 - depth (constant)
 - initial saturations (constant)
-- Stimulation/water flooding/secondary or tertiary recovery methods - this is probably be a classification input meaning you have lots of different names that correspond to different values within the model. So what you would do here is convert them to discrete numbers (ie. 0, 1, 2, 3) and each of them corresponds to a separate type that you're referring to. (time dependant)
 
 ## Pre First Steps
 - We will need to decide on what we're going to do. So that means what types of field(s) we're going to pull data for. For example, last year we looked at all wells in the last 10 years in the Montney. You guys might want to do something different though. Probably where ever Monica is working is best.

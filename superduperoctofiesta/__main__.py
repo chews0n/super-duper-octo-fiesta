@@ -41,7 +41,56 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"], #TODO: Also, he
              'zone_prd_2016_to_present.csv': ["Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
              'BC Total Production.csv': ["Zone Prod Period", "Oil Production (m3)", "Gas Production (e3m3)", "Condensate Production (m3)"]}#multiple WA
 
-INPUT_HEADERS = ['Well Authorization Number'] #TODO: populate this list with the headers that you will need for the model
+#TODO: populate this list with the headers that you will need for the model
+INPUT_HEADERS = ['Well Authorization Number',
+                'Surf Nad83 Lat',
+                'Surf Nad83 Long',
+                'CHARGE TYPE',
+                'VISCOSITY GEL TYPE',
+                'ENERGIZER',
+                'ENERGIZER TYPE',
+                'PROPPANT TYPE1',
+                'PROPPANT TYPE2',
+                'PROPPANT TYPE3',
+                'PROPPANT TYPE4',
+                'FRAC TYPE',
+                'Energizer',
+                'Energizer Type',
+                'COMPLTN TOP DEPTH (m)',
+                'COMPLTN BASE DEPTH (m)',
+                'FRAC STAGE NUM',
+                'IP90',
+                'IP180',
+                'Total Fluid Pumped (m3)',
+                'CHARGE SIZE (g)',
+                'SHOTS PER METER',
+                'DEGREE OF PHASING',
+                'AVG RATE (m3/min)',
+                'AVG TREATING PRESSURE (MPa)',
+                'FRAC GRADIENT (KPa/m)_x',
+                'Oil porsty',
+                'Gas porsty',
+                'Oil water satrtn',
+                'Gas water satrtn',
+                'Tvd oil net pay size',
+                'Tvd gas net pay size',
+                'Average Treating Pressure',
+                'Average Injection Rate',
+                'FRAC GRADIENT (KPa/m)_y',
+                'Fluid per m',
+                'Tonnage per m3']
+
+STRING_INPUTS = ['CHARGE TYPE',
+                'VISCOSITY GEL TYPE',
+                'ENERGIZER',
+                'ENERGIZER TYPE',
+                'PROPPANT TYPE1',
+                'PROPPANT TYPE2',
+                'PROPPANT TYPE3',
+                'PROPPANT TYPE4',
+                'FRAC TYPE',
+                'Energizer',
+                'Energizer Type']
 
 def str2bool(v):
     if isinstance(v, bool):
