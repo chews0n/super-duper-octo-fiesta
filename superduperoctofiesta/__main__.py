@@ -10,9 +10,17 @@ OGC_URLS = ['https://reports.bcogc.ca/ogc/app001/r/ams_reports/bc_total_producti
             'https://iris.bcogc.ca/download/drill_csv.zip',
             'https://iris.bcogc.ca/download/prod_csv.zip']
 
-FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"],
+AREA_CODE = [6200, 9022, 9021]
+
+FORMATION_CODE = [4990, 4995, 4997, 5000, 4000]
+
+# The format of the FILE_DICT is as follows:
+# {FILENAME(IN FULL): [list of headers that you need to read from the file into the program]}
+# In python {} means dictionary and [] means list, these are all comma separated
+
+FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long", "Directional Flag"], #TODO: Also, here you will want to do the full range of inputs that you need from the individual CSV's
              "perf.csv": ['PERF STAGE NUM', 'CHARGE TYPE', 'CHARGE SIZE (g)', 'SHOTS PER METER', 'DEGREE OF PHASING',
-                          'PERF COMMENTS'],
+                          'PERF COMMENTS', 'COMPLTN TOP DEPTH (m)', 'COMPLTN BASE DEPTH (m)', 'DEGREE OF PHASING', 'SHOTS PER METER'],
              'hydraulic_fracture.csv': ['COMPLTN TOP DEPTH (m)', 'COMPLTN BASE DEPTH (m)', 'FRAC STAGE NUM',
                                         'VISCOSITY GEL TYPE', 'ENERGIZER', 'ENERGIZER TYPE', 'AVG RATE (m3/min)',
                                         'AVG TREATING PRESSURE (MPa)', 'FRAC GRADIENT (KPa/m)','TOTAL FLUID PUMPED (m3)'
@@ -24,7 +32,7 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"],
              'form_top.csv':["Formtn_code", "Tvd_formtn_top_depth "], # multiple WA
              'perf_net_interval.csv':["PERF STAGE NUM", "INTERVAL TOP DEPTH (m)", "INTERVAL BASE DEPTH (m)"], #multiple WA
              'dst.csv': ["Dst_num", "Top_intrvl_depth (m)", "Base_intrvl_depth (m)", "Init_shutin_press",
-                         "Final_shutin_press", "Misrun_flag", "Skin", "Permblty", "Run_temp (c)"], # multiple WA, filter out misruns
+                         "Final_shutin_press", "Misrun_flag", "Skin", "Permblty", "Run_temp (c)", "Formtn_code"], # multiple WA, filter out misruns
              'pst_dtl.csv': ["Run_depth_temp (C)", "Run_depth_press (kPa)", "Datum_press (kPa)", "Run_depth (m)"], # might be multiple
              'pay_zone.csv': ["Oil porsty", "Gas porsty", "Oil water satrtn", "Gas water satrtn",
                               "Tvd oil net pay size", "Tvd gas net pay size"],
@@ -32,6 +40,19 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"],
              'zone_prd_2007_to_2015.csv': ["Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
              'zone_prd_2016_to_present.csv': ["Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
              'BC Total Production.csv': ["Zone Prod Period", "Oil Production (m3)", "Gas Production (e3m3)", "Condensate Production (m3)"]}#multiple WA
+
+INPUT_HEADERS = ['Well Authorization Number',
+                 'Surf Nad83 Lat',
+                 'Surf Nad83 Long',
+                 'Oil porsty',
+                 'Gas porsty',
+                 'Permblty',
+                 'Directional Flag',
+                 'Oil water satrtn',
+                 'Gas water satrtn',
+                 'Formtn_code',
+                 'Compltn_top_depth',
+                 'Compltn_base_depth'] #TODO: populate this list with the headers that you will need for the model
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -76,7 +97,10 @@ def main():
 
     ogc_data.download_data_url(file_names=FILE_DICT, force_download=args.download_ogc)
 
-    ogcData = ScrapeOGC(folder=args.output_folder, urls=OGC_URLS)
+    ogc_data.find_well_names(area_code=AREA_CODE, formation_code=FORMATION_CODE)
+
+    ogc_data.read_well_data(file_name=FILE_DICT)
+
 
 
 if __name__ == "__main__":
