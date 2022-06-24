@@ -18,9 +18,9 @@ FORMATION_CODE = [4990, 4995, 4997, 5000, 4000]
 # {FILENAME(IN FULL): [list of headers that you need to read from the file into the program]}
 # In python {} means dictionary and [] means list, these are all comma separated
 
-FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"], #TODO: Also, here you will want to do the full range of inputs that you need from the individual CSV's
+FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long", "Directional Flag"], #TODO: Also, here you will want to do the full range of inputs that you need from the individual CSV's
              "perf.csv": ['PERF STAGE NUM', 'CHARGE TYPE', 'CHARGE SIZE (g)', 'SHOTS PER METER', 'DEGREE OF PHASING',
-                          'PERF COMMENTS'],
+                          'PERF COMMENTS', 'COMPLTN TOP DEPTH (m)', 'COMPLTN BASE DEPTH (m)'],
              'hydraulic_fracture.csv': ['COMPLTN TOP DEPTH (m)', 'COMPLTN BASE DEPTH (m)', 'FRAC STAGE NUM',
                                         'VISCOSITY GEL TYPE', 'ENERGIZER', 'ENERGIZER TYPE', 'AVG RATE (m3/min)',
                                         'AVG TREATING PRESSURE (MPa)', 'FRAC GRADIENT (KPa/m)','TOTAL FLUID PUMPED (m3)'
@@ -32,7 +32,7 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long"], #TODO: Also, he
              'form_top.csv':["Formtn_code", "Tvd_formtn_top_depth "], # multiple WA
              'perf_net_interval.csv':["PERF STAGE NUM", "INTERVAL TOP DEPTH (m)", "INTERVAL BASE DEPTH (m)"], #multiple WA
              'dst.csv': ["Dst_num", "Top_intrvl_depth (m)", "Base_intrvl_depth (m)", "Init_shutin_press",
-                         "Final_shutin_press", "Misrun_flag", "Skin", "Permblty", "Run_temp (c)"], # multiple WA, filter out misruns
+                         "Final_shutin_press", "Misrun_flag", "Skin", "Permblty", "Run_temp (c)", "Formtn_code"], # multiple WA, filter out misruns
              'pst_dtl.csv': ["Run_depth_temp (C)", "Run_depth_press (kPa)", "Datum_press (kPa)", "Run_depth (m)"], # might be multiple
              'pay_zone.csv': ["Oil porsty", "Gas porsty", "Oil water satrtn", "Gas water satrtn",
                               "Tvd oil net pay size", "Tvd gas net pay size"],
@@ -70,6 +70,8 @@ INPUT_HEADERS = ['Well Authorization Number',
                 'FRAC GRADIENT (KPa/m)_x',
                 'Oil porsty',
                 'Gas porsty',
+                'Permblty',
+                'Directional Flag',
                 'Oil water satrtn',
                 'Gas water satrtn',
                 'Tvd oil net pay size',
@@ -78,7 +80,10 @@ INPUT_HEADERS = ['Well Authorization Number',
                 'Average Injection Rate',
                 'FRAC GRADIENT (KPa/m)_y',
                 'Fluid per m',
-                'Tonnage per m3']
+                'Tonnage per m3',
+                'Formtn_code',
+                'Compltn_top_depth',
+                'Compltn_base_depth']
 
 STRING_INPUTS = ['CHARGE TYPE',
                 'VISCOSITY GEL TYPE',
