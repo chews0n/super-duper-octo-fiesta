@@ -33,14 +33,17 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long", "Directional Fla
              'perf_net_interval.csv':["PERF STAGE NUM", "INTERVAL TOP DEPTH (m)", "INTERVAL BASE DEPTH (m)"], #multiple WA
              'dst.csv': ["Dst_num", "Top_intrvl_depth (m)", "Base_intrvl_depth (m)", "Init_shutin_press",
                          "Final_shutin_press", "Misrun_flag", "Skin", "Permblty", "Run_temp (c)", "Formtn_code"], # multiple WA, filter out misruns
-             'pst_dtl.csv': ["Run_depth_temp (C)", "Run_depth_press (kPa)", "Datum_press (kPa)", "Run_depth (m)"], # might be multiple
+             'pst_dtl.csv': ["UWI", "Run_depth_temp (C)", "Run_depth_press (kPa)", "Datum_press (kPa)", "Run_depth (m)"], # might be multiple
              'pay_zone.csv': ["Oil porsty", "Gas porsty", "Oil water satrtn", "Gas water satrtn",
                               "Tvd oil net pay size", "Tvd gas net pay size"],
              'dst_rate.csv': ["Dst_num", "Flowing_fluid_type", "Init_fluid_rate", "Avg_fluid_rate", "Final_fluid_rate"],#multiple WA
-             'zone_prd_2007_to_2015.csv': ["Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
-             'zone_prd_2016_to_present.csv': ["Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
-             'BC Total Production.csv': ["Zone Prod Period", "Oil Production (m3)", "Gas Production (e3m3)", "Condensate Production (m3)"]}#multiple WA
-
+             'zone_prd_2007_to_2015.csv': ["UWI", "Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
+             'zone_prd_2016_to_present.csv': ["UWI", "Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
+             'BC Total Production.csv': ["UWI", "Zone Prod Period", "Oil Production (m3)", "Gas Production (e3m3)", "Condensate Production (m3)"],
+			              'zone_prd.csv': ["Prod_period", "UWI", "Area_code", "Formtn_code", "Pool_seq", "Gas_prod_vol (e3m3)", "Oil_prod_vol (m3)", "Water_prod_vol (m3)", "Cond_prod_vol (m3)", "Prod_days", "Gas_prod_cum (e3m3)", "Oil_prod_cum (m3)", "Water_prod_cum (m3)", "Cond_prod_cum (m3)"],
+             'f_design.csv': ["Fac Id Code", "Capcty Vol", "Gas Outlet Vol", "C3 Capcty Vol", "C4 Capcty Vol", "C5 Plus Capcty Vol", "Sulphr Capcty Vol"],
+             'Fracture Fluid Data.csv': ["Fracture Date", "Well Area Name", "UWI", "Ingredient Name", "Ingredient Concentration in HF Fluid % by Mass", "Ingredient Percentage in Additive by % Mass", "Total Water Volume (m^3)"],
+             'compl_wo.csv': ["UWI", "Area_code", "Formtn_code", "Pool_seq", "Compltn_event_seq", "Compltn_date", "Compltn_top_depth (m)", "Compltn_base_depth (m)", "Compltn_type", "Stimltn_type", "Flow_fluid_type", "Stimltn_vol (m3)", "Stimltn_press (kPa)"]} #multiple WA
 #TODO: populate this list with the headers that you will need for the model
 INPUT_HEADERS = ['Well Authorization Number',
                 'Surf Nad83 Lat',
