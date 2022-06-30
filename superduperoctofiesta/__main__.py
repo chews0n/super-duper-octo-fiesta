@@ -3,6 +3,7 @@ from superduperoctofiesta.data import ScrapeOGC
 from enum import Enum
 import argparse
 import os
+import pandas as pd
 
 OGC_URLS = ['https://reports.bcogc.ca/ogc/app001/r/ams_reports/bc_total_production?request=CSV_Y',
             'https://reports.bcogc.ca/ogc/app001/r/ams_reports/2?request=CSV_N',
@@ -44,6 +45,7 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long", "Directional Fla
              'f_design.csv': ["Fac Id Code", "Capcty Vol", "Gas Outlet Vol", "C3 Capcty Vol", "C4 Capcty Vol", "C5 Plus Capcty Vol", "Sulphr Capcty Vol"],
              'Fracture Fluid Data.csv': ["Fracture Date", "Well Area Name", "UWI", "Ingredient Name", "Ingredient Concentration in HF Fluid % by Mass", "Ingredient Percentage in Additive by % Mass", "Total Water Volume (m^3)"],
              'compl_wo.csv': ["UWI", "Area_code", "Formtn_code", "Pool_seq", "Compltn_event_seq", "Compltn_date", "Compltn_top_depth (m)", "Compltn_base_depth (m)", "Compltn_type", "Stimltn_type", "Flow_fluid_type", "Stimltn_vol (m3)", "Stimltn_press (kPa)"]} #multiple WA
+
 #TODO: populate this list with the headers that you will need for the model
 INPUT_HEADERS = ['Well Authorization Number',
                 'Surf Nad83 Lat',
@@ -129,6 +131,20 @@ def parse_arguments():
     parser.add_argument("--output-folder", type=dir_path, nargs='?', default=os.getcwd(), dest='output_folder',
                         help="Folder to save the OGC data csv files to or read them in from if they have already been downloaded")
 
+    parser.add_argument("--input-file", type=str, nargs='?', default='input.csv', dest='input_file',
+                        help="Input file for the input to the model predictor.")
+
+    parser.add_argument("--feature-file", type=str, nargs='?', default='feature_list.csv', dest='feature_file',
+                        help="CSV file containing the feature list and values used to train the model.")
+
+    parser.add_argument("--number-of-iterations", type=int, nargs='?', default=5,
+                        dest='numiters',
+                        help="Number of iterations to create a model and get results from it")
+
+    parser.add_argument("--confidence-interval", type=float, nargs='?', default=95,
+                        dest='confidence_interval',
+                        help="Confidence interval for the ensemble based evaluation of the model")
+
     # parse the arguments
     args = parser.parse_args()
     return args
@@ -141,13 +157,48 @@ def main():
     # Download the data from OGC using the provided class
     ogc_data = ScrapeOGC(folder=args.output_folder, urls=OGC_URLS)
 
+    prediction = True
+
+    # use the input value(s) to predict the outputs
+    if (os.path.isfile(args.input_file)):
+        inputcsv = pd.read_csv(args.input_file)
+        inputcsv = inputcsv.drop(['Well Authorization Number'], axis=1)
+        wellnames = inputcsv.filter(['Well Authorization Number'], axis=1)
+    else:
+        print("the input file {} could not be found \n".format(args.input_file))
+        print("Prediction module will not proceed")
+        prediction = False
+
     ogc_data.download_data_url(file_names=FILE_DICT, force_download=args.download_ogc)
 
     ogc_data.find_well_names(area_code=AREA_CODE, formation_code=FORMATION_CODE)
 
     ogc_data.read_well_data(file_name=FILE_DICT)
 
+    #TODO: calculate the monthly production values/put them into a list
 
+    ogc_data.determine_frac_type()
+
+    ogc_data.fill_feature_list_nan_with_val(columns=['PROPPANT TYPE1 PLACED (t)', 'PROPPANT TYPE2 PLACED (t)',
+                                                    'PROPPANT TYPE3 PLACED (t)', 'PROPPANT TYPE4 PLACED (t)'],
+                                           val=0)
+
+    ogc_data.calc_frac_props()
+
+    ogc_data.fill_feature_list_nan_with_val(columns=['Total CO2 Pumped (m3)', 'Total N2 Pumped (scm)',
+                                                    'Total CH4 Pumped (e3m3)'], val=0)
+
+    ogc_data.remove_wells()
+
+    ogc_data.create_cleaned_feature_list()
+
+    ogc_data.print_feature_list_to_csv()
+
+    ogc_data.convert_string_inputs_to_none(STRING_INPUTS)
+
+    ogc_data.fill_feature_list_nan_with_val(columns=INPUT_HEADERS, val=0)
+
+    # TODO: FROM here, we train the model based on past data, we will remove a section of the data as verification data to check out predictions against for loop here around the data for separate model creation depending on or have one model, but for us
 
 if __name__ == "__main__":
     main()

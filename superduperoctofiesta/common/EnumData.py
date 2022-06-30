@@ -1,13 +1,9 @@
 from enum import Enum
 
-class RecoveryMethodEnum(Enum):
-    WATERFLOOD = 1
-    FRACTURING = 2
-    GASINJECTION = 3
-    CO2FLOOD = 4
+class Features(Enum):
+    WELL_LENGTH = 1
+    FLUID_PER_METER = 2
 
-class CompletionMethodsEnum(Enum):
-    OPENHOLE = 1
-    CASED = 2
-    ACIDWASH = 3
-    MESH = 4
+class Targets(Enum):
+    IP90 = 1
+    IP180 = 2
