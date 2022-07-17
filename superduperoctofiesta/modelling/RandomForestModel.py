@@ -14,6 +14,12 @@ PROD_VALS = ['IP30', 'IP60', 'IP90', 'IP120', 'IP150', 'IP180', 'IP210', 'IP240'
              'IP1380', 'IP1410', 'IP1440', 'IP1470', 'IP1500', 'IP1530', 'IP1560', 'IP1590', 'IP1620', 'IP1650',
              'IP1680', 'IP1710', 'IP1740', 'IP1770', 'IP1800']
 
+PLOT_X_VALS = ['30', '60', '90', '120', '150', '180', '210', '240', '270', '300', '330', '360',
+             '390', '420', '450', '480', '510', '540', '570', '600', '630', '660', '690', '720',
+             '750', '780', '810', '840', '870', '900', '930', '960', '990', '1020', '1050',
+             '1080', '1110', '1140', '1170', '1200', '1230', '1260', '1290', '1320', '1350',
+             '1380', '1410', '1440', '1470', '1500', '1530', '1560', '1590', '1620', '1650',
+             '1680', '1710', '1740', '1770', '1800']
 
 class RandomForestModel:
 
@@ -69,7 +75,7 @@ class RandomForestModel:
             self.y_trainprod.append(y_trainprod)
             self.y_testprod.append(y_testprod)
 
-            previous_prod = self.feature_list[PROD_VALS[idx]].to_list()
+            previous_prod = self.target_listprod[idx][PROD_VALS[idx]].to_list()
 
     def train_model(self):
         # Train the model with CatBoost Regressor
@@ -107,6 +113,32 @@ class RandomForestModel:
         mape = 100 * (abs(self.y_predprod - self.y_testprod) / self.y_testprod)
         accuracy = 100 - np.mean(mape)
         print('Prod Accuracy:', round(accuracy, 2), '%.')
+
+    def plot_test_vs_pred(self):
+
+        for idx,wells in enumerate(self.well_list):
+            yplotvalsorig = list()
+            yplotvalspred = list()
+
+
+            for idx2, prodlist in enumerate(PROD_VALS):
+
+                # here we have the prod list that we're looking at
+                # these are the original values
+                yplotvalsorig.append(self.df[wells][prodlist])
+                yplotvalspred.append(self.y_predprod[idx2][idx])
+
+
+            plt.plot(PLOT_X_VALS, yplotvalsorig, 'b-', label='actual')
+            plt.plot(PLOT_X_VALS, yplotvalspred, 'ro', label='prediction')
+            plt.legend()
+            plt.xlabel('Time [Days]')
+            plt.ylabel('BOE Production [SM3]')
+            plt.title('Actual and Predicted Values')
+
+            plt.savefig('ActualVsPred_well_{}.png'.format(wells), dpi=300)
+            plt.clf()
+
 
     def feature_importance(self, iternum):
         x_col = self.feature_list.columns
