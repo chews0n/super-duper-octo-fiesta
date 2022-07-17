@@ -51,3 +51,5 @@ Time dependent horizons, so for that I would suggest no more resolution than mon
 ## First Steps
 1. We will need to grab data for this. Where to get this data and how to use it will be the important parts
 2. Once we have the data, starting cleaning it, preferably something that takes in the raw data and uses scripting to clean out the data. This will be useful for using this on other sets of data, probably of the same type. What do I mean by that, I mean that if you're using for example GeoScout data, you should be able to use other GeoScout data with the cleaning software. Having said that, GeoScout data is usually fairly clean for modern wells/completions.
+
+## Make presentation
