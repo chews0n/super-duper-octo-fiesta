@@ -289,6 +289,8 @@ def main():
         ogcModel.y_predprod = ogcModel.predict_initial_production(ogcModel.x_testprod)
 
         ogcModel.feature_importance(0)
+
+        ogcModel.model_statistics()
     else:
 
         for ens_iter in range(0, args.numiters):
@@ -310,6 +312,8 @@ def main():
             predicted_vals = ogcModel.predict_initial_production(inputcsv, inputcsv)
 
             print("predicted IP30 iter#{}: {} \n".format(ens_iter, predicted_vals[0]))
+
+            ogcModel.model_statistics(ens_iter)
 
             ensemble_pred.append(predicted_vals)
 

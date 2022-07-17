@@ -102,17 +102,18 @@ class RandomForestModel:
 
         return y_predprod
 
-    def model_statistics(self):
+    def model_statistics(self, iteration=0):
 
-        error = mean_absolute_error(self.y_testprod, self.y_predprod)
-        print('Prod Accuracy:', round(error, 2))
-        r2 = r2_score(self.y_testprod, self.y_predprod)
-        print('Prod R2:', round(r2, 2))
+        for idx, proddays in enumerate(PROD_VALS):
+            error = mean_absolute_error(self.y_testprod[idx], self.y_predprod[idx])
+            print('{},{}: Prod Accuracy:'.format(PROD_VALS,iteration), round(error, 2))
+            r2 = r2_score(self.y_testprod[idx], self.y_predprod[idx])
+            print('{},{}: Prod R2:'.format(PROD_VALS,iteration), round(r2, 2))
 
-        # Calculate mean absolute percentage error (MAPE)
-        mape = 100 * (abs(self.y_predprod - self.y_testprod) / self.y_testprod)
-        accuracy = 100 - np.mean(mape)
-        print('Prod Accuracy:', round(accuracy, 2), '%.')
+            # Calculate mean absolute percentage error (MAPE)
+            mape = 100 * (abs(self.y_predprod[idx] - self.y_testprod[idx]) / self.y_testprod[idx])
+            accuracy = 100 - np.mean(mape)
+            print('{},{}: Prod Accuracy:'.format(PROD_VALS,iteration), round(accuracy, 2), '%.')
 
     def plot_test_vs_pred(self):
 
