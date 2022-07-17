@@ -36,6 +36,7 @@ class RandomForestModel:
         self.y_predprod = list()
         self.sc_xprod = list()
         self.sc_yprod = list()
+        self.trainpoolprod = list()
 
         for pval in PROD_VALS:
             self.target_listprod.append(self.df.filter([pval], axis=1))
