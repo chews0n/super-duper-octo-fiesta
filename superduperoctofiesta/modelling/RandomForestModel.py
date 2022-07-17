@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 import random
+import pandas as pd
 
 PROD_VALS = ['IP30', 'IP60', 'IP90', 'IP120', 'IP150', 'IP180', 'IP210', 'IP240', 'IP270', 'IP300', 'IP330', 'IP360',
              'IP390', 'IP420', 'IP450', 'IP480', 'IP510', 'IP540', 'IP570', 'IP600', 'IP630', 'IP660', 'IP690', 'IP720',
@@ -42,8 +43,20 @@ class RandomForestModel:
             self.target_listprod.append(self.df.filter([pval], axis=1))
 
     def split_data(self):
+        previous_prod = list()
+        numprod = self.df[self.df.columns[0]].count()
+        for idx, tlistprod in enumerate(self.target_listprod):
+            if (idx == 0):
+                for prodv in range(0,numprod):
+                    previous_prod.append(0.0)
 
-        for tlistprod in self.target_listprod:
+                dat2 = pd.DataFrame({'prevprod': previous_prod})
+
+                self.feature_list.join(dat2)
+            else:
+                self.feature_list['prevprod'] = previous_prod
+
+
             # this loop goes over each of the production month values and trains a separate model
             # we'll have to change the feature list value for the previous month's production.
 
@@ -55,6 +68,8 @@ class RandomForestModel:
             self.x_testprod.append(x_testprod)
             self.y_trainprod.append(y_trainprod)
             self.y_testprod.append(y_testprod)
+
+            previous_prod = self.feature_list[PROD_VALS[idx]].to_list()
 
     def train_model(self):
         # Train the model with CatBoost Regressor
@@ -113,8 +128,8 @@ class RandomForestModel:
                            'SAT', 'NETPAY',
                            'PAYGAS', 'TreatPRESS',
                            'INJRATE', 'FGRADY',
-                           'FLUIDPM', 'TONPM'
-                           ]#'PREVPROD']
+                           'FLUIDPM', 'TONPM',
+                           'PREVPROD']
             for score, name in sorted(zip(feature_importances, x_col), reverse=True):
                 print('{}: {}'.format(name, score))
 
