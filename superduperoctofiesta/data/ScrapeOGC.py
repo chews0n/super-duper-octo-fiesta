@@ -723,8 +723,7 @@ class ScrapeOGC:
                          'Average Injection Rate',
                          'FRAC GRADIENT (KPa/m)_y',
                          'Fluid per m',
-                         'Tonnage per m3',
-                         'Permblty']
+                         'Tonnage per m3']
 
 
 
