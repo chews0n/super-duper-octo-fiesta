@@ -1,8 +1,12 @@
-from superduperoctofiesta.common import EnumData, RecoveryMethodEnum
 from superduperoctofiesta.data import ScrapeOGC
-from enum import Enum
+from superduperoctofiesta.modelling import RandomForestModel
+
 import argparse
 import os
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 import pandas as pd
 
 OGC_URLS = ['https://reports.bcogc.ca/ogc/app001/r/ams_reports/bc_total_production?request=CSV_Y',
@@ -21,7 +25,7 @@ FORMATION_CODE = [4990, 4995, 4997, 5000, 4000]
 
 FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long", "Directional Flag"], #TODO: Also, here you will want to do the full range of inputs that you need from the individual CSV's
              "perf.csv": ['PERF STAGE NUM', 'CHARGE TYPE', 'CHARGE SIZE (g)', 'SHOTS PER METER', 'DEGREE OF PHASING',
-                          'PERF COMMENTS', 'COMPLTN TOP DEPTH (m)', 'COMPLTN BASE DEPTH (m)'],
+                          'PERF COMMENTS'],
              'hydraulic_fracture.csv': ['COMPLTN TOP DEPTH (m)', 'COMPLTN BASE DEPTH (m)', 'FRAC STAGE NUM',
                                         'VISCOSITY GEL TYPE', 'ENERGIZER', 'ENERGIZER TYPE', 'AVG RATE (m3/min)',
                                         'AVG TREATING PRESSURE (MPa)', 'FRAC GRADIENT (KPa/m)','TOTAL FLUID PUMPED (m3)'
@@ -41,10 +45,10 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long", "Directional Fla
              'zone_prd_2007_to_2015.csv': ["UWI", "Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
              'zone_prd_2016_to_present.csv': ["UWI", "Prod_period", "Oil_prod_vol (m3)", "Gas_prod_vol (e3m3)", "Cond_prod_vol (m3)"],#multiple WA
              'BC Total Production.csv': ["UWI", "Zone Prod Period", "Oil Production (m3)", "Gas Production (e3m3)", "Condensate Production (m3)"],
-			              'zone_prd.csv': ["Prod_period", "UWI", "Area_code", "Formtn_code", "Pool_seq", "Gas_prod_vol (e3m3)", "Oil_prod_vol (m3)", "Water_prod_vol (m3)", "Cond_prod_vol (m3)", "Prod_days", "Gas_prod_cum (e3m3)", "Oil_prod_cum (m3)", "Water_prod_cum (m3)", "Cond_prod_cum (m3)"],
-             'f_design.csv': ["Fac Id Code", "Capcty Vol", "Gas Outlet Vol", "C3 Capcty Vol", "C4 Capcty Vol", "C5 Plus Capcty Vol", "Sulphr Capcty Vol"],
-             'Fracture Fluid Data.csv': ["Fracture Date", "Well Area Name", "UWI", "Ingredient Name", "Ingredient Concentration in HF Fluid % by Mass", "Ingredient Percentage in Additive by % Mass", "Total Water Volume (m^3)"],
-             'compl_wo.csv': ["UWI", "Area_code", "Formtn_code", "Pool_seq", "Compltn_event_seq", "Compltn_date", "Compltn_top_depth (m)", "Compltn_base_depth (m)", "Compltn_type", "Stimltn_type", "Flow_fluid_type", "Stimltn_vol (m3)", "Stimltn_press (kPa)"]} #multiple WA
+              #'zone_prd.csv': ["Prod_period", "UWI", "Area_code", "Formtn_code", "Pool_seq", "Gas_prod_vol (e3m3)", "Oil_prod_vol (m3)", "Water_prod_vol (m3)", "Cond_prod_vol (m3)", "Prod_period", "Gas_prod_cum (e3m3)", "Oil_prod_cum (m3)", "Water_prod_cum (m3)", "Cond_prod_cum (m3)"],
+             #'Fracture Fluid Data.csv': ["Fracture Date", "Well Area Name", "UWI", "Ingredient Name", "Ingredient Concentration in HF Fluid % by Mass", "Ingredient Percentage in Additive by % Mass", "Total Water Volume (m^3)"],
+             #'compl_wo.csv': ["UWI", "Area_code", "Formtn_code", "Pool_seq", "Compltn_event_seq", "Compltn_date", "Compltn_top_depth (m)", "Compltn_base_depth (m)", "Compltn_type", "Stimltn_type", "Flow_fluid_type", "Stimltn_vol (m3)", "Stimltn_press (kPa)"]
+             } #multiple WA
 
 #TODO: populate this list with the headers that you will need for the model
 INPUT_HEADERS = ['Well Authorization Number',
@@ -64,8 +68,6 @@ INPUT_HEADERS = ['Well Authorization Number',
                 'COMPLTN TOP DEPTH (m)',
                 'COMPLTN BASE DEPTH (m)',
                 'FRAC STAGE NUM',
-                'IP90',
-                'IP180',
                 'Total Fluid Pumped (m3)',
                 'CHARGE SIZE (g)',
                 'SHOTS PER METER',
@@ -76,7 +78,7 @@ INPUT_HEADERS = ['Well Authorization Number',
                 'Oil porsty',
                 'Gas porsty',
                 'Permblty',
-                'Directional Flag',
+                #'Directional Flag',
                 'Oil water satrtn',
                 'Gas water satrtn',
                 'Tvd oil net pay size',
@@ -86,9 +88,69 @@ INPUT_HEADERS = ['Well Authorization Number',
                 'FRAC GRADIENT (KPa/m)_y',
                 'Fluid per m',
                 'Tonnage per m3',
-                'Formtn_code',
-                'Compltn_top_depth',
-                'Compltn_base_depth']
+                'IP30',
+                'IP60',
+                'IP90',
+                'IP120',
+                'IP150',
+                'IP180',
+                'IP210',
+                'IP240',
+                'IP270',
+                'IP300',
+                'IP330',
+                'IP360',
+                'IP390',
+                'IP420',
+                'IP450',
+                'IP480',
+                'IP510',
+                'IP540',
+                'IP570',
+                'IP600',
+                'IP630',
+                'IP660',
+                'IP690',
+                'IP720',
+                'IP750',
+                'IP780',
+                'IP810',
+                'IP840',
+                'IP870',
+                'IP900',
+                'IP930',
+                'IP960',
+                'IP990',
+                'IP1020',
+                'IP1050',
+                'IP1080',
+                'IP1110',
+                'IP1140',
+                'IP1170',
+                'IP1200',
+                'IP1230',
+                'IP1260',
+                'IP1290',
+                'IP1320',
+                'IP1350',
+                'IP1380',
+                'IP1410',
+                'IP1440',
+                'IP1470',
+                'IP1500',
+                'IP1530',
+                'IP1560',
+                'IP1590',
+                'IP1620',
+                'IP1650',
+                'IP1680',
+                'IP1710',
+                'IP1740',
+                'IP1770',
+                'IP1800'
+                #'Compltn_top_depth',
+                #'Compltn_base_depth'
+                 ]
 
 STRING_INPUTS = ['CHARGE TYPE',
                 'VISCOSITY GEL TYPE',
@@ -101,6 +163,13 @@ STRING_INPUTS = ['CHARGE TYPE',
                 'FRAC TYPE',
                 'Energizer',
                 'Energizer Type']
+
+PROD_VALS = ['IP30', 'IP60', 'IP90', 'IP120', 'IP150', 'IP180', 'IP210', 'IP240', 'IP270', 'IP300', 'IP330', 'IP360',
+             'IP390', 'IP420', 'IP450', 'IP480', 'IP510', 'IP540', 'IP570', 'IP600', 'IP630', 'IP660', 'IP690', 'IP720',
+             'IP750', 'IP780', 'IP810', 'IP840', 'IP870', 'IP900', 'IP930', 'IP960', 'IP990', 'IP1020', 'IP1050',
+             'IP1080', 'IP1110', 'IP1140', 'IP1170', 'IP1200', 'IP1230', 'IP1260', 'IP1290', 'IP1320', 'IP1350',
+             'IP1380', 'IP1410', 'IP1440', 'IP1470', 'IP1500', 'IP1530', 'IP1560', 'IP1590', 'IP1620', 'IP1650',
+             'IP1680', 'IP1710', 'IP1740', 'IP1770', 'IP1800']
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -177,6 +246,8 @@ def main():
 
     #TODO: calculate the monthly production values/put them into a list
 
+    ogc_data.calc_monthly_prod()
+
     ogc_data.determine_frac_type()
 
     ogc_data.fill_feature_list_nan_with_val(columns=['PROPPANT TYPE1 PLACED (t)', 'PROPPANT TYPE2 PLACED (t)',
@@ -198,7 +269,51 @@ def main():
 
     ogc_data.fill_feature_list_nan_with_val(columns=INPUT_HEADERS, val=0)
 
-    # TODO: FROM here, we train the model based on past data, we will remove a section of the data as verification data to check out predictions against for loop here around the data for separate model creation depending on or have one model, but for us
+    ensemble_pred = list()
+
+    # Create 30 day prod predictions.
+
+    # FROM here, we train the model based on past data, we will remove a section of the data as verification data to check out predictions against
+    # for loop here around the data for separate model creation depending on or have one model, but for us
+    if not prediction:
+        ogcModel = RandomForestModel(df=ogc_data.feature_list)
+
+        ogcModel.split_data()
+
+        print("Training the model...\n")
+
+        ogcModel.train_model()
+
+        print("Model Evaluation...\n")
+
+        ogcModel.y_predprod = ogcModel.predict_initial_production(ogcModel.x_testprod)
+
+        #ogcModel.feature_importance(0)
+    else:
+
+        for ens_iter in range(0, args.numiters):
+            ogcModel = RandomForestModel(df=ogc_data.feature_list)
+
+            ogcModel.split_data()
+
+            print("Training the model...\n")
+
+            ogcModel.train_model()
+
+            print("Model Evaluation...\n")
+
+            ogcModel.y_predprod = ogcModel.predict_initial_production(ogcModel.x_testprod)
+
+            #ogcModel.feature_importance(ens_iter)
+
+            predicted_vals = list()
+            predicted_vals = ogcModel.predict_initial_production(inputcsv, inputcsv)
+
+            print("predicted IP30 iter#{}: {} \n".format(ens_iter, predicted_vals[0]))
+
+            ensemble_pred.append(predicted_vals)
+
+    print("Super Duper Octofiesta is finishing....")
 
 if __name__ == "__main__":
     main()

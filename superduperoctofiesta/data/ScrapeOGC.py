@@ -509,11 +509,11 @@ class ScrapeOGC:
             else:
                 pass
 
-    def calc_ip90_ip180(self):
+    def calc_monthly_prod(self):
 
         # loop over the three well production files to determine the ip90 and ip180 for each well
 
-        df2 = pd.DataFrame(columns=['Well Authorization Number', 'IP90', 'IP180'])
+        df2 = pd.DataFrame(columns=['Well Authorization Number', 'IP30', 'IP60', 'IP90', 'IP120', 'IP150', 'IP180', 'IP210', 'IP240', 'IP270', 'IP300', 'IP330', 'IP360', 'IP390', 'IP420', 'IP450', 'IP480', 'IP510', 'IP540', 'IP570', 'IP600', 'IP630', 'IP660', 'IP690', 'IP720', 'IP750', 'IP780', 'IP810', 'IP840', 'IP870', 'IP900', 'IP930', 'IP960', 'IP990', 'IP1020', 'IP1050', 'IP1080', 'IP1110', 'IP1140', 'IP1170', 'IP1200', 'IP1230', 'IP1260', 'IP1290', 'IP1320', 'IP1350', 'IP1380', 'IP1410', 'IP1440', 'IP1470', 'IP1500', 'IP1530', 'IP1560', 'IP1590', 'IP1620', 'IP1650', 'IP1680', 'IP1710', 'IP1740', 'IP1770', 'IP1800'])
         for idx, df in enumerate(self.multiple_list):
             if self.multiple_names[idx] =='zone_prd_2007_to_2015.csv':
                 combined_df = self.multiple_wells[idx]
@@ -532,11 +532,11 @@ class ScrapeOGC:
 
             well_df.sort_values(by=["Prod_period"])
             data = []
-            data.append([well_num, 0.0, 0.0])
-            df_ip = pd.DataFrame(data, columns=['Well Authorization Number', 'IP90', 'IP180'])
+            data.append([well_num, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+            df_ip = pd.DataFrame(data, columns=['Well Authorization Number', 'IP30', 'IP60', 'IP90', 'IP120', 'IP150', 'IP180', 'IP210', 'IP240', 'IP270', 'IP300', 'IP330', 'IP360', 'IP390', 'IP420', 'IP450', 'IP480', 'IP510', 'IP540', 'IP570', 'IP600', 'IP630', 'IP660', 'IP690', 'IP720', 'IP750', 'IP780', 'IP810', 'IP840', 'IP870', 'IP900', 'IP930', 'IP960', 'IP990', 'IP1020', 'IP1050', 'IP1080', 'IP1110', 'IP1140', 'IP1170', 'IP1200', 'IP1230', 'IP1260', 'IP1290', 'IP1320', 'IP1350', 'IP1380', 'IP1410', 'IP1440', 'IP1470', 'IP1500', 'IP1530', 'IP1560', 'IP1590', 'IP1620', 'IP1650', 'IP1680', 'IP1710', 'IP1740', 'IP1770', 'IP1800'])
 
             # assume that each period is one month
-            if (len(well_df) < 6):
+            if (len(well_df) < 60):
                 # not enough production data to use for ip90/ip180
                 self.removal_wells.append(well_num)
             else:
@@ -557,8 +557,66 @@ class ScrapeOGC:
                                 startindex = index
                                 break
 
+                    df_ip['IP30'] = well_df.head(1 + startindex)['boe'].sum()
+                    df_ip['IP60'] = well_df.head(2 + startindex)['boe'].sum()
                     df_ip['IP90'] = well_df.head(3 + startindex)['boe'].sum()
+                    df_ip['IP120'] = well_df.head(4 + startindex)['boe'].sum()
+                    df_ip['IP150'] = well_df.head(5 + startindex)['boe'].sum()
                     df_ip['IP180'] = well_df.head(6 + startindex)['boe'].sum()
+                    df_ip['IP210'] = well_df.head(7 + startindex)['boe'].sum()
+                    df_ip['IP240'] = well_df.head(8 + startindex)['boe'].sum()
+                    df_ip['IP270'] = well_df.head(9 + startindex)['boe'].sum()
+                    df_ip['IP300'] = well_df.head(10 + startindex)['boe'].sum()
+                    df_ip['IP330'] = well_df.head(11 + startindex)['boe'].sum()
+                    df_ip['IP360'] = well_df.head(12 + startindex)['boe'].sum()
+                    df_ip['IP390'] = well_df.head(13 + startindex)['boe'].sum()
+                    df_ip['IP420'] = well_df.head(14 + startindex)['boe'].sum()
+                    df_ip['IP450'] = well_df.head(15 + startindex)['boe'].sum()
+                    df_ip['IP480'] = well_df.head(16 + startindex)['boe'].sum()
+                    df_ip['IP510'] = well_df.head(17 + startindex)['boe'].sum()
+                    df_ip['IP540'] = well_df.head(18 + startindex)['boe'].sum()
+                    df_ip['IP570'] = well_df.head(19 + startindex)['boe'].sum()
+                    df_ip['IP600'] = well_df.head(20 + startindex)['boe'].sum()
+                    df_ip['IP630'] = well_df.head(21 + startindex)['boe'].sum()
+                    df_ip['IP660'] = well_df.head(22 + startindex)['boe'].sum()
+                    df_ip['IP690'] = well_df.head(23 + startindex)['boe'].sum()
+                    df_ip['IP720'] = well_df.head(24 + startindex)['boe'].sum()
+                    df_ip['IP750'] = well_df.head(25 + startindex)['boe'].sum()
+                    df_ip['IP780'] = well_df.head(26 + startindex)['boe'].sum()
+                    df_ip['IP810'] = well_df.head(27 + startindex)['boe'].sum()
+                    df_ip['IP840'] = well_df.head(28 + startindex)['boe'].sum()
+                    df_ip['IP870'] = well_df.head(29 + startindex)['boe'].sum()
+                    df_ip['IP900'] = well_df.head(30 + startindex)['boe'].sum()
+                    df_ip['IP930'] = well_df.head(31 + startindex)['boe'].sum()
+                    df_ip['IP960'] = well_df.head(32 + startindex)['boe'].sum()
+                    df_ip['IP990'] = well_df.head(33 + startindex)['boe'].sum()
+                    df_ip['IP1020'] = well_df.head(34 + startindex)['boe'].sum()
+                    df_ip['IP1050'] = well_df.head(35 + startindex)['boe'].sum()
+                    df_ip['IP1080'] = well_df.head(36 + startindex)['boe'].sum()
+                    df_ip['IP1110'] = well_df.head(37 + startindex)['boe'].sum()
+                    df_ip['IP1140'] = well_df.head(38 + startindex)['boe'].sum()
+                    df_ip['IP1170'] = well_df.head(39 + startindex)['boe'].sum()
+                    df_ip['IP1200'] = well_df.head(40 + startindex)['boe'].sum()
+                    df_ip['IP1230'] = well_df.head(41 + startindex)['boe'].sum()
+                    df_ip['IP1260'] = well_df.head(42 + startindex)['boe'].sum()
+                    df_ip['IP1290'] = well_df.head(43 + startindex)['boe'].sum()
+                    df_ip['IP1320'] = well_df.head(44 + startindex)['boe'].sum()
+                    df_ip['IP1350'] = well_df.head(45 + startindex)['boe'].sum()
+                    df_ip['IP1380'] = well_df.head(46 + startindex)['boe'].sum()
+                    df_ip['IP1410'] = well_df.head(47 + startindex)['boe'].sum()
+                    df_ip['IP1440'] = well_df.head(48 + startindex)['boe'].sum()
+                    df_ip['IP1470'] = well_df.head(49 + startindex)['boe'].sum()
+                    df_ip['IP1500'] = well_df.head(50 + startindex)['boe'].sum()
+                    df_ip['IP1530'] = well_df.head(51 + startindex)['boe'].sum()
+                    df_ip['IP1560'] = well_df.head(52 + startindex)['boe'].sum()
+                    df_ip['IP1590'] = well_df.head(53 + startindex)['boe'].sum()
+                    df_ip['IP1620'] = well_df.head(54 + startindex)['boe'].sum()
+                    df_ip['IP1650'] = well_df.head(55 + startindex)['boe'].sum()
+                    df_ip['IP1680'] = well_df.head(56 + startindex)['boe'].sum()
+                    df_ip['IP1710'] = well_df.head(57 + startindex)['boe'].sum()
+                    df_ip['IP1740'] = well_df.head(58 + startindex)['boe'].sum()
+                    df_ip['IP1770'] = well_df.head(59 + startindex)['boe'].sum()
+                    df_ip['IP1800'] = well_df.head(60 + startindex)['boe'].sum()
 
             df2 = df2.append(df_ip)
 
@@ -586,9 +644,68 @@ class ScrapeOGC:
         max_heads = [
             'COMPLTN BASE DEPTH (m)',
             'FRAC STAGE NUM',
+            'Total Fluid Pumped (m3)',
+            'IP30',
+            'IP60',
             'IP90',
+            'IP120',
+            'IP150',
             'IP180',
-            'Total Fluid Pumped (m3)']
+            'IP210',
+            'IP240',
+            'IP270',
+            'IP300',
+            'IP330',
+            'IP360',
+            'IP390',
+            'IP420',
+            'IP450',
+            'IP480',
+            'IP510',
+            'IP540',
+            'IP570',
+            'IP600',
+            'IP630',
+            'IP660',
+            'IP690',
+            'IP720',
+            'IP750',
+            'IP780',
+            'IP810',
+            'IP840',
+            'IP870',
+            'IP900',
+            'IP930',
+            'IP960',
+            'IP990',
+            'IP1020',
+            'IP1050',
+            'IP1080',
+            'IP1110',
+            'IP1140',
+            'IP1170',
+            'IP1200',
+            'IP1230',
+            'IP1260',
+            'IP1290',
+            'IP1320',
+            'IP1350',
+            'IP1380',
+            'IP1410',
+            'IP1440',
+            'IP1470',
+            'IP1500',
+            'IP1530',
+            'IP1560',
+            'IP1590',
+            'IP1620',
+            'IP1650',
+            'IP1680',
+            'IP1710',
+            'IP1740',
+            'IP1770',
+            'IP1800'
+        ]
 
         average_heads = ['CHARGE SIZE (g)',
                          'SHOTS PER METER',
@@ -606,7 +723,8 @@ class ScrapeOGC:
                          'Average Injection Rate',
                          'FRAC GRADIENT (KPa/m)_y',
                          'Fluid per m',
-                         'Tonnage per m3']
+                         'Tonnage per m3',
+                         'Permblty']
 
 
 
