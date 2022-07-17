@@ -170,7 +170,7 @@ PROD_VALS = ['IP30', 'IP60', 'IP90', 'IP120', 'IP150', 'IP180', 'IP210', 'IP240'
              'IP1080', 'IP1110', 'IP1140', 'IP1170', 'IP1200', 'IP1230', 'IP1260', 'IP1290', 'IP1320', 'IP1350',
              'IP1380', 'IP1410', 'IP1440', 'IP1470', 'IP1500', 'IP1530', 'IP1560', 'IP1590', 'IP1620', 'IP1650',
              'IP1680', 'IP1710', 'IP1740', 'IP1770', 'IP1800']
-
+# these are in cums, did you want to do just that month's prduction?
 def str2bool(v):
     if isinstance(v, bool):
         return v
