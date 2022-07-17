@@ -288,7 +288,7 @@ def main():
 
         ogcModel.y_predprod = ogcModel.predict_initial_production(ogcModel.x_testprod)
 
-        #ogcModel.feature_importance(0)
+        ogcModel.feature_importance(0)
     else:
 
         for ens_iter in range(0, args.numiters):
@@ -304,7 +304,7 @@ def main():
 
             ogcModel.y_predprod = ogcModel.predict_initial_production(ogcModel.x_testprod)
 
-            #ogcModel.feature_importance(ens_iter)
+            ogcModel.feature_importance(ens_iter)
 
             predicted_vals = list()
             predicted_vals = ogcModel.predict_initial_production(inputcsv, inputcsv)

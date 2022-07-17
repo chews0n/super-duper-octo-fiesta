@@ -43,6 +43,9 @@ class RandomForestModel:
     def split_data(self):
 
         for tlistprod in self.target_listprod:
+            # this loop goes over each of the production month values and trains a separate model
+            # we'll have to change the feature list value for the previous month's production.
+
             x_trainprod, x_testprod, y_trainprod, y_testprod = train_test_split(self.feature_list,
                                                                                 tlistprod, test_size=0.2,
                                                                                 random_state=1)
@@ -91,29 +94,31 @@ class RandomForestModel:
 
     def feature_importance(self, iternum):
         x_col = self.feature_list.columns
-        feature_importances = self.modelprod.get_feature_importance(self.trainpoolprod)
-        plot_labels = ['LAT', 'LONG',
-                       'CHARGE', 'GEL',
-                       'ENERGIZER', 'ENERGIZERT',
-                       'PROP1', 'PROP2',
-                       'PROP3', 'PROP4',
-                       'FRACT', 'Energizer',
-                       'EnergizerT', 'TOP',
-                       'BASE', 'FRACNUM',
-                       'CUMFLUID', 'CHARGESIZE',
-                       'SHOTSPM', 'PHASING',
-                       'RATE', 'PRESS',
-                       'FGRADX', 'PORO',
-                       'GPORO', 'Oil water satrtn',
-                       'SAT', 'NETPAY',
-                       'PAYGAS', 'TreatPRESS',
-                       'INJRATE', 'FGRADY',
-                       'FLUIDPM', 'TONPM']
-        for score, name in sorted(zip(feature_importances, x_col), reverse=True):
-            print('{}: {}'.format(name, score))
+        for idx, model in self.trainpoolprod:
+            feature_importances = self.modelprod[idx].get_feature_importance(self.trainpoolprod[idx])
+            plot_labels = ['LAT', 'LONG',
+                           'CHARGE', 'GEL',
+                           'ENERGIZER', 'ENERGIZERT',
+                           'PROP1', 'PROP2',
+                           'PROP3', 'PROP4',
+                           'FRACT', 'Energizer',
+                           'EnergizerT', 'TOP',
+                           'BASE', 'FRACNUM',
+                           'CUMFLUID', 'CHARGESIZE',
+                           'SHOTSPM', 'PHASING',
+                           'RATE', 'PRESS',
+                           'FGRADX', 'PORO',
+                           'GPORO', 'Oil water satrtn',
+                           'SAT', 'NETPAY',
+                           'PAYGAS', 'TreatPRESS',
+                           'INJRATE', 'FGRADY',
+                           'FLUIDPM', 'TONPM'
+                           ]#'PREVPROD']
+            for score, name in sorted(zip(feature_importances, x_col), reverse=True):
+                print('{}: {}'.format(name, score))
 
-        # for idx, val in enumerate(feature_importances)
-        plt.bar(plot_labels, feature_importances)
-        plt.xticks(rotation='vertical')
-        plt.savefig('Feature_Importanceprod_iter_{}.png'.format(iternum), dpi=300)
-        plt.clf()
+            # for idx, val in enumerate(feature_importances)
+            plt.bar(plot_labels, feature_importances)
+            plt.xticks(rotation='vertical')
+            plt.savefig('Feature_Importanceprod_PRODMONTH_{}_iter_{}.png'.format(idx,iternum), dpi=300)
+            plt.clf()
