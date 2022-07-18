@@ -54,7 +54,7 @@ class RandomForestModel:
         for idx, tlistprod in enumerate(self.target_listprod):
             if (idx == 0):
                 for prodv in range(0,numprod):
-                    previous_prod.append(0.0)
+                    previous_prod.append(np.float64(0.0))
 
                 dat2 = pd.DataFrame({'prevprod': previous_prod})
 
@@ -75,7 +75,7 @@ class RandomForestModel:
             self.y_trainprod.append(y_trainprod)
             self.y_testprod.append(y_testprod)
 
-            previous_prod = self.target_listprod[idx][PROD_VALS[idx]].to_list()
+            previous_prod = np.float64(self.target_listprod[idx][PROD_VALS[idx]].to_list())
 
     def train_model(self):
         # Train the model with CatBoost Regressor
