@@ -58,7 +58,7 @@ class RandomForestModel:
 
                 dat2 = pd.DataFrame({'prevprod': previous_prod})
 
-                self.feature_list.join(dat2)
+                self.feature_list = self.feature_list.join(dat2)
             else:
                 self.feature_list['prevprod'] = previous_prod
 

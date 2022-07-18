@@ -244,8 +244,6 @@ def main():
 
     ogc_data.read_well_data(file_name=FILE_DICT)
 
-    #TODO: calculate the monthly production values/put them into a list
-
     ogc_data.calc_monthly_prod()
 
     ogc_data.determine_frac_type()
