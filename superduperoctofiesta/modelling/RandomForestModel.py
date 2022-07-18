@@ -85,8 +85,8 @@ class RandomForestModel:
             self.sc_xprod.append(StandardScaler())
             self.sc_yprod.append(StandardScaler())
 
-            self.x_trainprod.append(self.sc_xprod[idx].fit_transform(self.x_trainprod[idx]))
-            self.y_trainprod.append(self.sc_yprod[idx].fit_transform(self.y_trainprod[idx]))
+            self.x_trainprod[idx] = self.sc_xprod[idx].fit_transform(self.x_trainprod[idx])
+            self.y_trainprod[idx] = self.sc_yprod[idx].fit_transform(self.y_trainprod[idx])
 
             self.modelprod.append(CatBoostRegressor(iterations=1000, learning_rate=0.01,
                                                logging_level='Silent', random_seed=random.randint(0, 2500)))
