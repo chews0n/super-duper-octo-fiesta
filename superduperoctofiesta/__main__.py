@@ -1,8 +1,9 @@
 from superduperoctofiesta.data import ScrapeOGC
 from superduperoctofiesta.modelling import RandomForestModel
-
+import matplotlib.pyplot as plt
 import argparse
 import os
+import numpy as np
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -50,7 +51,6 @@ FILE_DICT = {'wells.csv': ["Surf Nad83 Lat", "Surf Nad83 Long", "Directional Fla
              #'compl_wo.csv': ["UWI", "Area_code", "Formtn_code", "Pool_seq", "Compltn_event_seq", "Compltn_date", "Compltn_top_depth (m)", "Compltn_base_depth (m)", "Compltn_type", "Stimltn_type", "Flow_fluid_type", "Stimltn_vol (m3)", "Stimltn_press (kPa)"]
              } #multiple WA
 
-#TODO: populate this list with the headers that you will need for the model
 INPUT_HEADERS = ['Well Authorization Number',
                 'Surf Nad83 Lat',
                 'Surf Nad83 Long',
@@ -185,7 +185,7 @@ def dir_path(path):
     if os.path.isdir(path):
         return path
     else:
-        raise argparse.ArgumentTypeError(f"readable_dir:{path} is not a valid path")
+        raise argparse.ArgumentTypeError("readable_dir:{} is not a valid path".format(path))
 
 def parse_arguments():
     # create parser
@@ -218,6 +218,28 @@ def parse_arguments():
     args = parser.parse_args()
     return args
 
+def plot_ens_well_vals(yplotvalsorig, yplotvalspred, wellnum):
+
+    xvalsplot = list()
+
+    for idx, prodlist in enumerate(PROD_VALS):
+
+        xvalsplot.append((idx + 1) * 30)
+
+    plt.plot(xvalsplot, yplotvalsorig, 'b-', label='actual')
+
+    for idx, yvals in enumerate(yplotvalspred):
+        plt.plot(xvalsplot, yvals, 'ro', label='pred')
+
+    #plt.legend()
+    plt.xlabel('Time [Days]')
+    plt.ylabel('BOE Production [SM3]')
+    plt.title('Actual and Predicted Values')
+    plt.xticks(np.arange(min(xvalsplot), max(xvalsplot) + 1, 360))
+
+    plt.savefig('ActualVsPred_well_{}.png'.format(wellnum), dpi=300)
+    plt.clf()
+
 def main():
 
     # Use the above function to parse the arguments input into the program
@@ -229,43 +251,51 @@ def main():
     prediction = True
 
     # use the input value(s) to predict the outputs
+    wellnames = None
     if (os.path.isfile(args.input_file)):
         inputcsv = pd.read_csv(args.input_file)
+        wellnames = inputcsv.filter(['Well Authorization Number'], axis=1).values.tolist()[0][0]
         inputcsv = inputcsv.drop(['Well Authorization Number'], axis=1)
-        wellnames = inputcsv.filter(['Well Authorization Number'], axis=1)
+
     else:
         print("the input file {} could not be found \n".format(args.input_file))
         print("Prediction module will not proceed")
         prediction = False
 
     ogc_data.download_data_url(file_names=FILE_DICT, force_download=args.download_ogc)
+    if (args.feature_file is not None and os.path.isfile(args.feature_file) and args.download_ogc is False):
+        ogc_data.feature_list = pd.read_csv(args.feature_file)
+        ogc_data.feature_list = ogc_data.feature_list.iloc[:, 1:]
 
-    ogc_data.find_well_names(area_code=AREA_CODE, formation_code=FORMATION_CODE)
+    else:
+        ogc_data.download_data_url(file_names=FILE_DICT)
 
-    ogc_data.read_well_data(file_name=FILE_DICT)
+        ogc_data.find_well_names(area_code=AREA_CODE, formation_code=FORMATION_CODE)
 
-    ogc_data.calc_monthly_prod()
+        ogc_data.read_well_data(file_name=FILE_DICT)
 
-    ogc_data.determine_frac_type()
+        ogc_data.calc_monthly_prod()
 
-    ogc_data.fill_feature_list_nan_with_val(columns=['PROPPANT TYPE1 PLACED (t)', 'PROPPANT TYPE2 PLACED (t)',
-                                                    'PROPPANT TYPE3 PLACED (t)', 'PROPPANT TYPE4 PLACED (t)'],
-                                           val=0)
+        ogc_data.determine_frac_type()
 
-    ogc_data.calc_frac_props()
+        ogc_data.fill_feature_list_nan_with_val(columns=['PROPPANT TYPE1 PLACED (t)', 'PROPPANT TYPE2 PLACED (t)',
+                                                        'PROPPANT TYPE3 PLACED (t)', 'PROPPANT TYPE4 PLACED (t)'],
+                                               val=0)
 
-    ogc_data.fill_feature_list_nan_with_val(columns=['Total CO2 Pumped (m3)', 'Total N2 Pumped (scm)',
-                                                    'Total CH4 Pumped (e3m3)'], val=0)
+        ogc_data.calc_frac_props()
 
-    ogc_data.remove_wells()
+        ogc_data.fill_feature_list_nan_with_val(columns=['Total CO2 Pumped (m3)', 'Total N2 Pumped (scm)',
+                                                        'Total CH4 Pumped (e3m3)'], val=0)
 
-    ogc_data.create_cleaned_feature_list()
+        ogc_data.remove_wells()
 
-    ogc_data.print_feature_list_to_csv()
+        ogc_data.create_cleaned_feature_list()
 
-    ogc_data.convert_string_inputs_to_none(STRING_INPUTS)
+        ogc_data.convert_string_inputs_to_none(STRING_INPUTS)
 
-    ogc_data.fill_feature_list_nan_with_val(columns=INPUT_HEADERS, val=0)
+        ogc_data.fill_feature_list_nan_with_val(columns=INPUT_HEADERS, val=0)
+
+        ogc_data.print_feature_list_to_csv()
 
     ensemble_pred = list()
 
@@ -289,8 +319,13 @@ def main():
         ogcModel.feature_importance(0)
 
         ogcModel.model_statistics()
+
+        ogcModel.plot_test_vs_pred()
     else:
 
+        predicted_vals = list()
+        orig_vals = list()
+        well_num = -1
         for ens_iter in range(0, args.numiters):
             ogcModel = RandomForestModel(df=ogc_data.feature_list)
 
@@ -306,14 +341,24 @@ def main():
 
             ogcModel.feature_importance(ens_iter)
 
-            predicted_vals = list()
-            predicted_vals = ogcModel.predict_initial_production(inputcsv, inputcsv)
+            predvalstmp = ogcModel.predict_initial_production(inputcsv, ensemble=True)
 
-            print("predicted IP30 iter#{}: {} \n".format(ens_iter, predicted_vals[0]))
+            predvalstmp = np.concatenate(np.concatenate(predvalstmp, axis=0), axis=0).tolist()
+
+            predicted_vals.append(predvalstmp)
+
+            if ens_iter == 1:
+                well_num = ogcModel.df.index[ogcModel.df["Well Authorization Number"] == wellnames].values.tolist()[0]
+
+                orig_vals = ogcModel.df.iloc[well_num].values.tolist()
+
+                orig_vals = orig_vals[18:18+len(PROD_VALS)]
 
             ogcModel.model_statistics(ens_iter)
 
             ensemble_pred.append(predicted_vals)
+
+        plot_ens_well_vals(orig_vals, predicted_vals, well_num)
 
     print("Super Duper Octofiesta is finishing....")
 

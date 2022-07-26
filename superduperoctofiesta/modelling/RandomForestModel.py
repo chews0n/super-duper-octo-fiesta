@@ -35,7 +35,7 @@ class RandomForestModel:
              'IP1380', 'IP1410', 'IP1440', 'IP1470', 'IP1500', 'IP1530', 'IP1560', 'IP1590', 'IP1620', 'IP1650',
              'IP1680', 'IP1710', 'IP1740', 'IP1770', 'IP1800', 'Well Authorization Number'], axis=1)
         self.target_listprod = list()  # self.df.filter(['IP90'], axis=1)
-        self.well_list = self.df.filter(['Well Authorization Number'], axis=1)
+        self.well_list_test = list() #self.df.filter(['Well Authorization Number'], axis=1)
         self.x_trainprod = list()
         self.x_testprod = list()
         self.y_trainprod = list()
@@ -70,6 +70,8 @@ class RandomForestModel:
                                                                                 tlistprod, test_size=0.2,
                                                                                 random_state=1)
 
+            self.well_list_test = x_testprod.filter(['Well Authorization Number'], axis=1).index.tolist()
+
             self.x_trainprod.append(x_trainprod)
             self.x_testprod.append(x_testprod)
             self.y_trainprod.append(y_trainprod)
@@ -80,7 +82,7 @@ class RandomForestModel:
     def train_model(self):
         # Train the model with CatBoost Regressor
 
-        for idx, xtrainp in enumerate(self.x_trainprod):
+        for idx in range(0, len(self.target_listprod)):
 
             self.sc_xprod.append(StandardScaler())
             self.sc_yprod.append(StandardScaler())
@@ -94,11 +96,22 @@ class RandomForestModel:
             self.trainpoolprod.append(Pool(self.x_trainprod[idx], self.y_trainprod[idx]))
             self.modelprod[idx].fit(self.trainpoolprod[idx], eval_set=(self.x_testprod[idx], self.y_testprod[idx]))
 
-    def predict_initial_production(self, xprod):
+    def predict_initial_production(self, xprod, ensemble=False):
         # Pass in the inputs that you want to use to predict production
         y_predprod = list()
+
+        if ensemble:
+            dat2 = pd.DataFrame({'prevprod': [0.0]})
+            xprod = xprod.join(dat2)
+
         for idx, modprod in enumerate(self.modelprod):
-            y_predprod.append(self.sc_yprod[idx].inverse_transform(self.modelprod[idx].predict(self.sc_xprod[idx].transform(xprod[idx]))))
+            if ensemble:
+                y_predprod.append(self.sc_yprod[idx].inverse_transform(
+                    self.modelprod[idx].predict(self.sc_xprod[idx].transform(xprod)).reshape(-1, 1)))
+                xprod['prevprod'] = y_predprod[idx]
+            else:
+                y_predprod.append(self.sc_yprod[idx].inverse_transform(
+                    self.modelprod[idx].predict(self.sc_xprod[idx].transform(xprod[idx])).reshape(-1, 1)))
 
         return y_predprod
 
@@ -106,36 +119,42 @@ class RandomForestModel:
 
         for idx, proddays in enumerate(PROD_VALS):
             error = mean_absolute_error(self.y_testprod[idx], self.y_predprod[idx])
-            print('{},{}: Prod Accuracy:'.format(PROD_VALS,iteration), round(error, 2))
+            print('{},{}: Prod Accuracy:'.format(proddays,iteration), round(error, 2))
             r2 = r2_score(self.y_testprod[idx], self.y_predprod[idx])
-            print('{},{}: Prod R2:'.format(PROD_VALS,iteration), round(r2, 2))
+            print('{},{}: Prod R2:'.format(proddays,iteration), round(r2, 2))
 
             # Calculate mean absolute percentage error (MAPE)
             mape = 100 * (abs(self.y_predprod[idx] - self.y_testprod[idx]) / self.y_testprod[idx])
             accuracy = 100 - np.mean(mape)
-            print('{},{}: Prod Accuracy:'.format(PROD_VALS,iteration), round(accuracy, 2), '%.')
+            print('{},{}: Prod Accuracy:'.format(proddays,iteration), round(accuracy, 2), '%.')
 
     def plot_test_vs_pred(self):
 
-        for idx,wells in enumerate(self.well_list):
+        for idx,wells in enumerate(self.well_list_test):
             yplotvalsorig = list()
             yplotvalspred = list()
+
+            xvalsplot = list()
+
 
 
             for idx2, prodlist in enumerate(PROD_VALS):
 
                 # here we have the prod list that we're looking at
                 # these are the original values
-                yplotvalsorig.append(self.df[wells][prodlist])
+                yplotvalsorig.append(self.df.iloc[wells][prodlist])
                 yplotvalspred.append(self.y_predprod[idx2][idx])
 
+                xvalsplot.append((idx2 + 1)*30)
 
-            plt.plot(PLOT_X_VALS, yplotvalsorig, 'b-', label='actual')
-            plt.plot(PLOT_X_VALS, yplotvalspred, 'ro', label='prediction')
+
+            plt.plot(xvalsplot, yplotvalsorig, 'b-', label='actual')
+            plt.plot(xvalsplot, yplotvalspred, 'ro', label='prediction')
             plt.legend()
             plt.xlabel('Time [Days]')
             plt.ylabel('BOE Production [SM3]')
             plt.title('Actual and Predicted Values')
+            plt.xticks(np.arange(min(xvalsplot), max(xvalsplot) + 1, 360))
 
             plt.savefig('ActualVsPred_well_{}.png'.format(wells), dpi=300)
             plt.clf()
@@ -143,7 +162,7 @@ class RandomForestModel:
 
     def feature_importance(self, iternum):
         x_col = self.feature_list.columns
-        for idx, model in self.trainpoolprod:
+        for idx, model in enumerate(self.trainpoolprod):
             feature_importances = self.modelprod[idx].get_feature_importance(self.trainpoolprod[idx])
             plot_labels = ['LAT', 'LONG',
                            'CHARGE', 'GEL',
