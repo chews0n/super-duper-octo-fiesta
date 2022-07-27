@@ -96,7 +96,7 @@ class RandomForestModel:
             self.trainpoolprod.append(Pool(self.x_trainprod[idx], self.y_trainprod[idx]))
             self.modelprod[idx].fit(self.trainpoolprod[idx], eval_set=(self.x_testprod[idx], self.y_testprod[idx]))
 
-    def predict_initial_production(self, xprod, ensemble=False):
+    def predict_initial_production(self, xprod, ensemble=False, syntheticprev=False):
         # Pass in the inputs that you want to use to predict production
         y_predprod = list()
 
@@ -110,6 +110,9 @@ class RandomForestModel:
                     self.modelprod[idx].predict(self.sc_xprod[idx].transform(xprod)).reshape(-1, 1)))
                 xprod['prevprod'] = y_predprod[idx]
             else:
+                if idx > 1 and syntheticprev:
+                    xprod[idx]['prevprod'] = xprod[idx-1]['prevprod']
+
                 y_predprod.append(self.sc_yprod[idx].inverse_transform(
                     self.modelprod[idx].predict(self.sc_xprod[idx].transform(xprod[idx])).reshape(-1, 1)))
 

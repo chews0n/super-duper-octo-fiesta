@@ -214,6 +214,10 @@ def parse_arguments():
                         dest='confidence_interval',
                         help="Confidence interval for the ensemble based evaluation of the model")
 
+    parser.add_argument("--synthetic-previous", type=str2bool, nargs='?', dest='synprev',
+                        const=True, default=False,
+                        help="Use the synthetic data for previous production for testing of the well data")
+
     # parse the arguments
     args = parser.parse_args()
     return args
@@ -314,7 +318,7 @@ def main():
 
         print("Model Evaluation...\n")
 
-        ogcModel.y_predprod = ogcModel.predict_initial_production(ogcModel.x_testprod)
+        ogcModel.y_predprod = ogcModel.predict_initial_production(ogcModel.x_testprod, syntheticprev=args.synprev)
 
         ogcModel.feature_importance(0)
 
